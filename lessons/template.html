@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Korean · Lektion {{N}}</title>
+<style>
+  :root { --bg:#f6f8f4; --card:#fff; --ink:#222; --muted:#777; --accent:#2e8b57; --ok:#1e9e5a; --bad:#d64545; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; background:var(--bg); color:var(--ink); }
+  header { position:sticky; top:0; z-index:5; background:var(--card); border-bottom:1px solid #dde5d8; padding:10px 16px; }
+  header h1 { font-size:18px; margin:0 0 8px; }
+  nav { display:flex; gap:6px; flex-wrap:wrap; }
+  nav button { border:1px solid #ccc; background:#fff; border-radius:18px; padding:6px 12px; cursor:pointer; font-size:14px; }
+  nav button.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+  header { display:flex; flex-wrap:wrap; align-items:flex-start; gap:4px 12px; }
+  header h1 { flex:1 1 100%; }
+  header nav { flex:1 1 auto; }
+  .zoom { display:flex; align-items:center; gap:6px; font-size:13px; color:var(--muted); }
+  .spd { display:flex; align-items:center; gap:4px; margin-left:8px; } .spd input { width:90px; } #sv { min-width:70px; }
+  .zoom button { border:1px solid #ccc; background:#fff; border-radius:8px; padding:5px 10px; cursor:pointer; font-size:14px; }
+  main { max-width:820px; margin:0 auto; padding:16px; }
+  .card { background:var(--card); border-radius:12px; padding:16px; margin-bottom:14px; box-shadow:0 1px 3px rgba(0,0,0,.06); }
+  .muted { color:var(--muted); font-size:13px; }
+  .btn { border:none; background:var(--accent); color:#fff; padding:8px 14px; border-radius:8px; cursor:pointer; font-size:15px; }
+  .play { border:none; background:#e3f1e7; border-radius:50%; width:34px; height:34px; cursor:pointer; flex:none; }
+  .words { display:grid; grid-template-columns:repeat(auto-fill, minmax(240px,1fr)); gap:12px; }
+  .word { text-align:center; }
+  .word img { width:100%; max-height:150px; object-fit:contain; border-radius:8px; background:#f3f7ef; }
+  .word .k { font-size:30px; font-weight:600; margin-top:6px; }
+  .word .yo { color:var(--accent); }
+  .word .de { font-size:17px; }
+  .word .ex { margin-top:8px; padding-top:8px; border-top:1px dashed #e0e0e0; font-size:18px; text-align:left; display:flex; gap:8px; align-items:flex-start; }
+  .word .note { font-size:12px; color:var(--muted); margin-top:6px; text-align:left; }
+  .reveal { cursor:pointer; filter:blur(8px); user-select:none; } .reveal.open { filter:none; }
+  .story { display:flex; gap:10px; align-items:flex-start; padding:10px 8px; border-bottom:1px dashed #e0e0e0; border-radius:8px; }
+  .story > .muted { width:20px; padding-top:8px; text-align:right; }
+  .story .ko { font-size:22px; } .story.now { background:#eef8f0; }
+  .hidden-t { filter:blur(6px); cursor:pointer; } .hidden-t.open { filter:none; }
+  .bubble { display:flex; gap:8px; align-items:flex-start; margin:10px 0; }
+  .bubble.B { flex-direction:row-reverse; text-align:right; }
+  .bubble .t { background:#eef8f0; border-radius:12px; padding:8px 12px; max-width:80%; }
+  .bubble.B .t { background:#eef2fb; }
+  .bubble .ko { font-size:21px; }
+  input[type=text] { font-size:20px; padding:8px; width:100%; border:1px solid #ccc; border-radius:8px; }
+  .big { font-size:28px; text-align:center; margin:10px 0; }
+  table { width:100%; border-collapse:collapse; } td, th { padding:6px; border-bottom:1px solid #eee; text-align:left; }
+  .pair { display:flex; gap:10px; } .pair > div { flex:1; text-align:center; background:#f3f7ef; border-radius:10px; padding:10px; }
+  footer { text-align:center; color:var(--muted); font-size:12px; padding:20px; }
+</style>
+</head>
+<body>
+<header>
+  <h1><span class="muted">Lektion {{N}} ·</span> {{TITLE}} <span class="muted">(TOPIK #{{UNIT}}: {{WORDLIST}})</span></h1>
+  <nav id="nav"></nav>
+  <div class="zoom"><button id="zm" aria-label="Verkleinern">A−</button><span id="zv"></span><button id="zp" aria-label="Vergrößern">A+</button>
+    <label class="spd">🐢 Tempo <input type="range" id="spd" min="0" max="3" step="1"> <span id="sv"></span></label></div>
+</header>
+<main id="main"></main>
+<script>
+(function(){
+  var z=parseFloat(localStorage.getItem('pageZoom'))||1, m=document.getElementById('main'), v=document.getElementById('zv');
+  function set(x){ z=Math.min(2,Math.max(0.8,Math.round(x*10)/10)); m.style.zoom=z; v.textContent=Math.round(z*100)+'%'; localStorage.setItem('pageZoom',z); }
+  document.getElementById('zm').onclick=function(){set(z-0.1)};
+  document.getElementById('zp').onclick=function(){set(z+0.1)};
+  set(z);
+  var S=[["s10","schnell"],["s25","normal"],["s40","langsam"],["s50","sehr langsam"]], r=document.getElementById('spd'), sv=document.getElementById('sv');
+  var si=localStorage.getItem('audioSpeed'); si=si===null?2:+si;
+  function setS(i){ r.value=i; window.audioDir=S[i][0]; sv.textContent=S[i][1]; localStorage.setItem('audioSpeed',i); }
+  r.oninput=function(){setS(+r.value)};
+  setS(si);
+})();
+</script>
+<footer>Pictures: <a href="https://openmoji.org">OpenMoji</a> (CC BY-SA 4.0) · Audio: Edge TTS · Anki deck: anki/{{ANKI_FILE}}</footer>
+<script>
+/*DATA*/
+const $ = (s, r=document) => r.querySelector(s);
+let cur = null;
+let runId = 0;
+const src = f => "audio/" + window.audioDir + "/" + f;
+function play(file) { runId++; if (cur) cur.pause(); cur = new Audio(src(file)); cur.play(); }
+function stopAudio() { runId++; if (cur) cur.pause(); document.querySelectorAll(".story.now").forEach(e => e.classList.remove("now")); }
+const btn = f => `<button class="play" onclick="play('${f}')">🔊</button>`;
+const shuffle = a => a.map(x => [Math.random(), x]).sort((p, q) => p[0] - q[0]).map(x => x[1]);
+
+const TABS = {
+  "Wörter": () => `<p class="muted">Rate das Wort zum Bild, dann tippe auf den unscharfen Bereich. Tippe 🔊 zum Anhören.
+      <button class="btn" onclick="document.querySelectorAll('.reveal').forEach(e=>e.classList.toggle('open', this.dataset.s!=='1')); this.dataset.s=this.dataset.s==='1'?'':'1'">Alle zeigen/verbergen</button></p><div class="words">` +
+    DATA.words.map(w => `<div class="card word">
+      <img src="${w.img}" alt="">
+      <div class="reveal" onclick="if(!event.target.closest('button'))this.classList.toggle('open')">
+      <div class="k">${w.word} ${btn(w.audio)}</div>
+      <div class="muted">[${w.pron}] · ${w.pos}</div>
+      ${w.yo ? `<div class="yo">${w.yo} ${btn(w.yoAudio)}</div>` : ""}
+      <div class="de">${w.de}<br><span class="muted">${w.en}</span></div>
+      <div class="ex">${btn(w.ex.audio)}<div>${w.ex.ko}<br><span class="muted">${w.ex.de}</span></div></div>
+      <div class="note">${w.note}</div></div></div>`).join("") + `</div>`,
+
+  "Zusammenhang": () => `<div class="card"><h3>Gegensatzpaare</h3>` +
+      DATA.pairs.map(p => `<div class="pair"><div class="big">${p[0]}</div><div class="big">${p[1]}</div></div>`).join("") + `</div>
+    <div class="card"><h3>Grammatik-Notizen</h3><table>` +
+      DATA.grammar.map(g => `<tr><td><b>${g[0]}</b></td><td>${g[1]}</td></tr>`).join("") + `</table></div>`,
+
+  "Dialog": () => `<div class="card"><h3>${DATA.dialogueTitle[0]} <span class="muted">${DATA.dialogueTitle[1]}</span></h3>` +
+    DATA.dialogue.map(d => `<div class="bubble ${d.spk}">${btn(d.audio)}<div class="t"><div class="ko reveal" onclick="this.classList.toggle('open')">${d.ko}</div>
+      <div class="muted hidden-t" onclick="this.classList.toggle('open')">${d.de}<br>${d.en}</div></div></div>`).join("") +
+    `<button class="btn" onclick="playAll()">▶ Alles abspielen</button> <button class="btn" onclick="document.querySelectorAll('.bubble .reveal, .bubble .hidden-t').forEach(e=>e.classList.toggle('open', this.dataset.s!=='1')); this.dataset.s=this.dataset.s==='1'?'':'1'">Alle zeigen/verbergen</button></div>`,
+
+  "Geschichte": () => `<div class="card"><h3>${DATA.storyTitle[0]} <span class="muted">${DATA.storyTitle[1]}</span></h3>
+      <p class="muted">Höre Satz für Satz. Tippe auf den unscharfen Satz, um ihn zu sehen – die Übersetzung darunter separat.</p>
+      <p><button class="btn" onclick="playStory()">▶ Ganze Geschichte</button> <button class="btn" onclick="stopAudio()">⏹ Stop</button>
+      <button class="btn" onclick="document.querySelectorAll('.story .reveal').forEach(e=>e.classList.toggle('open', this.dataset.s!=='1')); this.dataset.s=this.dataset.s==='1'?'':'1'">Alle zeigen/verbergen</button></p>` +
+    DATA.story.map((s, i) => `<div class="story" id="st${i}"><span class="muted">${i + 1}</span>${btn(s.audio)}<div>
+      <div class="reveal ko" onclick="this.classList.toggle('open')">${s.ko}</div>
+      <div class="reveal muted" onclick="this.classList.toggle('open')">${s.de}</div></div></div>`).join("") + `</div>`,
+
+  "Diktat": () => `<div id="dict"></div>`,
+};
+
+function dictation() {
+  const el = $("#dict"); let i = 0;
+  const show = () => {
+    if (i >= DATA.dictation.length) { el.innerHTML = `<div class="card"><div class="big">🎉</div><button class="btn" onclick="dictation()">Nochmal</button></div>`; i = 0; return; }
+    const d = DATA.dictation[i];
+    el.innerHTML = `<div class="card"><div class="muted">${i + 1} / ${DATA.dictation.length} · Höre und schreibe</div>
+      <div class="big">${btn(d.audio)}</div><input type="text" id="inp" autocomplete="off" placeholder="한국어…">
+      <p id="res" class="muted"></p><div id="act"><button class="btn" id="chk">Prüfen</button></div></div>`;
+    play(d.audio);
+    const norm = s => s.replace(/[\s.?!]/g, "");
+    const check = () => {
+      const ok = norm($("#inp").value) === norm(d.ko);
+      if (ok) { $("#res").innerHTML = "✅ Richtig!"; setTimeout(() => { i++; show(); }, 800); return; }
+      $("#res").innerHTML = `❌ Nicht ganz. Richtig: <b>${d.ko}</b>`;
+      $("#act").innerHTML = `<button class="btn" id="retry">↻ Nochmal versuchen</button> <button class="btn" id="next">Weiter →</button>`;
+      $("#retry").onclick = () => { $("#res").innerHTML = ""; $("#act").innerHTML = `<button class="btn" id="chk">Prüfen</button>`; $("#chk").onclick = check; $("#inp").value = ""; $("#inp").focus(); play(d.audio); };
+      $("#next").onclick = () => { i++; show(); };
+    };
+    $("#chk").onclick = check;
+    $("#inp").onkeydown = e => { if (e.key === "Enter" && $("#chk")) check(); };
+  };
+  show();
+}
+
+function playStory() {
+  stopAudio(); const id = runId; let i = 0;
+  const next = () => {
+    document.querySelectorAll(".story.now").forEach(e => e.classList.remove("now"));
+    if (id !== runId || i >= DATA.story.length) return;
+    const el = document.getElementById("st" + i); el.classList.add("now"); el.scrollIntoView({ block: "center", behavior: "smooth" });
+    cur = new Audio(src(DATA.story[i++].audio));
+    cur.onended = () => setTimeout(() => { if (id === runId) next(); }, 2500);
+    cur.play();
+  };
+  next();
+}
+
+function playAll() {
+  let i = 0;
+  const next = () => { if (i >= DATA.dialogue.length) return; cur = new Audio(src(DATA.dialogue[i++].audio)); cur.onended = () => setTimeout(next, 1800); cur.play(); };
+  next();
+}
+
+function tab(name) {
+  document.querySelectorAll("#nav button").forEach(b => b.classList.toggle("active", b.textContent === name));
+  $("#main").innerHTML = TABS[name]();
+  if (name === "Diktat") dictation();
+}
+$("#nav").innerHTML = Object.keys(TABS).map(n => `<button onclick="tab('${n}')">${n}</button>`).join("");
+tab("Wörter");
+</script>
+</body>
+</html>

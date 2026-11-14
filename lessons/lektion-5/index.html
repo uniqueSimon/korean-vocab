@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Korean · Lektion 5</title>
+<style>
+  :root { --bg:#f6f8f4; --card:#fff; --ink:#222; --muted:#777; --accent:#2e8b57; --ok:#1e9e5a; --bad:#d64545; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; background:var(--bg); color:var(--ink); }
+  header { position:sticky; top:0; z-index:5; background:var(--card); border-bottom:1px solid #dde5d8; padding:10px 16px; }
+  header h1 { font-size:18px; margin:0 0 8px; }
+  nav { display:flex; gap:6px; flex-wrap:wrap; }
+  nav button { border:1px solid #ccc; background:#fff; border-radius:18px; padding:6px 12px; cursor:pointer; font-size:14px; }
+  nav button.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+  header { display:flex; flex-wrap:wrap; align-items:flex-start; gap:4px 12px; }
+  header h1 { flex:1 1 100%; }
+  header nav { flex:1 1 auto; }
+  .zoom { display:flex; align-items:center; gap:6px; font-size:13px; color:var(--muted); }
+  .spd { display:flex; align-items:center; gap:4px; margin-left:8px; } .spd input { width:90px; } #sv { min-width:70px; }
+  .zoom button { border:1px solid #ccc; background:#fff; border-radius:8px; padding:5px 10px; cursor:pointer; font-size:14px; }
+  main { max-width:820px; margin:0 auto; padding:16px; }
+  .card { background:var(--card); border-radius:12px; padding:16px; margin-bottom:14px; box-shadow:0 1px 3px rgba(0,0,0,.06); }
+  .muted { color:var(--muted); font-size:13px; }
+  .btn { border:none; background:var(--accent); color:#fff; padding:8px 14px; border-radius:8px; cursor:pointer; font-size:15px; }
+  .play { border:none; background:#e3f1e7; border-radius:50%; width:34px; height:34px; cursor:pointer; flex:none; }
+  .words { display:grid; grid-template-columns:repeat(auto-fill, minmax(240px,1fr)); gap:12px; }
+  .word { text-align:center; }
+  .word img { width:100%; max-height:150px; object-fit:contain; border-radius:8px; background:#f3f7ef; }
+  .word .k { font-size:30px; font-weight:600; margin-top:6px; }
+  .word .yo { color:var(--accent); }
+  .word .de { font-size:17px; }
+  .word .ex { margin-top:8px; padding-top:8px; border-top:1px dashed #e0e0e0; font-size:18px; text-align:left; display:flex; gap:8px; align-items:flex-start; }
+  .word .note { font-size:12px; color:var(--muted); margin-top:6px; text-align:left; }
+  .reveal { cursor:pointer; filter:blur(8px); user-select:none; } .reveal.open { filter:none; }
+  .story { display:flex; gap:10px; align-items:flex-start; padding:10px 8px; border-bottom:1px dashed #e0e0e0; border-radius:8px; }
+  .story > .muted { width:20px; padding-top:8px; text-align:right; }
+  .story .ko { font-size:22px; } .story.now { background:#eef8f0; }
+  .hidden-t { filter:blur(6px); cursor:pointer; } .hidden-t.open { filter:none; }
+  .bubble { display:flex; gap:8px; align-items:flex-start; margin:10px 0; }
+  .bubble.B { flex-direction:row-reverse; text-align:right; }
+  .bubble .t { background:#eef8f0; border-radius:12px; padding:8px 12px; max-width:80%; }
+  .bubble.B .t { background:#eef2fb; }
+  .bubble .ko { font-size:21px; }
+  input[type=text] { font-size:20px; padding:8px; width:100%; border:1px solid #ccc; border-radius:8px; }
+  .big { font-size:28px; text-align:center; margin:10px 0; }
+  table { width:100%; border-collapse:collapse; } td, th { padding:6px; border-bottom:1px solid #eee; text-align:left; }
+  .pair { display:flex; gap:10px; } .pair > div { flex:1; text-align:center; background:#f3f7ef; border-radius:10px; padding:10px; }
+  footer { text-align:center; color:var(--muted); font-size:12px; padding:20px; }
+</style>
+</head>
+<body>
+<header>
+  <h1><span class="muted">Lektion 5 ·</span> 👪 우리 가족 — Familie &amp; Alter <span class="muted">(TOPIK #9: 엄마 · 오빠 · 동생 · 태어나다 · 아이 · 어리다 · 나이 · 어른 · 인사하다)</span></h1>
+  <nav id="nav"></nav>
+  <div class="zoom"><button id="zm" aria-label="Verkleinern">A−</button><span id="zv"></span><button id="zp" aria-label="Vergrößern">A+</button>
+    <label class="spd">🐢 Tempo <input type="range" id="spd" min="0" max="3" step="1"> <span id="sv"></span></label></div>
+</header>
+<main id="main"></main>
+<script>
+(function(){
+  var z=parseFloat(localStorage.getItem('pageZoom'))||1, m=document.getElementById('main'), v=document.getElementById('zv');
+  function set(x){ z=Math.min(2,Math.max(0.8,Math.round(x*10)/10)); m.style.zoom=z; v.textContent=Math.round(z*100)+'%'; localStorage.setItem('pageZoom',z); }
+  document.getElementById('zm').onclick=function(){set(z-0.1)};
+  document.getElementById('zp').onclick=function(){set(z+0.1)};
+  set(z);
+  var S=[["s10","schnell"],["s25","normal"],["s40","langsam"],["s50","sehr langsam"]], r=document.getElementById('spd'), sv=document.getElementById('sv');
+  var si=localStorage.getItem('audioSpeed'); si=si===null?2:+si;
+  function setS(i){ r.value=i; window.audioDir=S[i][0]; sv.textContent=S[i][1]; localStorage.setItem('audioSpeed',i); }
+  r.oninput=function(){setS(+r.value)};
+  setS(si);
+})();
+</script>
+<footer>Pictures: <a href="https://openmoji.org">OpenMoji</a> (CC BY-SA 4.0) · Audio: Edge TTS · Anki deck: anki/topik-9-family.apkg</footer>
+<script>
+const DATA = {"words": [{"word": "엄마", "pron": "엄마", "pos": "n.", "de": "Mama, Mutter", "en": "mom, mother", "yo": null, "note": "엄마 = Mama (familiär), höflich: 어머니. Papa = 아빠.", "img": "img/topik9f-1f469-1f476.png", "audio": "f50189b0da8f.mp3", "yoAudio": null, "ex": {"ko": "우리 엄마는 의사예요.", "de": "Meine Mama ist Ärztin.", "en": "My mom is a doctor.", "audio": "d9ee1b3fef4e.mp3"}}, {"word": "오빠", "pron": "오빠", "pos": "n.", "de": "älterer Bruder (einer Frau)", "en": "older brother (of a female)", "yo": null, "note": "Nur Frauen sagen 오빠. Männer sagen 형.", "img": "img/topik9f-1f467-1f468.png", "audio": "1603da956db5.mp3", "yoAudio": null, "ex": {"ko": "저는 오빠가 있어요.", "de": "Ich habe einen älteren Bruder.", "en": "I have an older brother.", "audio": "ffe070c966ac.mp3"}}, {"word": "동생", "pron": "동생", "pos": "n.", "de": "jüngeres Geschwister", "en": "younger brother/sister", "yo": null, "note": "여동생 = jüngere Schwester, 남동생 = jüngerer Bruder.", "img": "img/topik9f-1f9d2.png", "audio": "3072e7d90511.mp3", "yoAudio": null, "ex": {"ko": "동생이 있어요?", "de": "Hast du jüngere Geschwister?", "en": "Do you have a younger sibling?", "audio": "b93c84a3ae0c.mp3"}}, {"word": "태어나다", "pron": "태어나다", "pos": "v.", "de": "geboren werden", "en": "to be born", "yo": "태어나요", "note": "Meist Vergangenheit: 서울에서 태어났어요 = Ich bin in Seoul geboren.", "img": "img/topik9f-1f476.png", "audio": "2cae773d85b9.mp3", "yoAudio": "29353357d0fe.mp3", "ex": {"ko": "아이가 태어나요.", "de": "Ein Kind wird geboren.", "en": "A baby is born.", "audio": "6ec531b4ddf1.mp3"}}, {"word": "아이", "pron": "아이", "pos": "n.", "de": "Kind, Baby", "en": "child, kid", "yo": null, "note": "아이들 = Kinder. 어린 아이 = kleines Kind.", "img": "img/topik9f-1f6dd.png", "audio": "eedfe2e4dbb1.mp3", "yoAudio": null, "ex": {"ko": "아이가 몇 살이에요?", "de": "Wie alt ist das Kind?", "en": "How old is the child?", "audio": "dff97b6c6d55.mp3"}}, {"word": "어리다", "pron": "어리다", "pos": "adj.", "de": "jung, klein (vom Alter)", "en": "to be young", "yo": "어려요", "note": "Vor Nomen: 어린 아이. Gegenteil: 나이가 많다.", "img": "img/topik9f-1f423.png", "audio": "60650f75c12d.mp3", "yoAudio": "36f807fcf541.mp3", "ex": {"ko": "동생은 나이가 어려요.", "de": "Mein Geschwister ist noch klein.", "en": "My sibling is young.", "audio": "7daf9831a11f.mp3"}}, {"word": "나이", "pron": "나이", "pos": "n.", "de": "Alter", "en": "age", "yo": null, "note": "Alter mit koreanischen Zahlen + 살: 다섯 살, 스물다섯 살.", "img": "img/topik9f-1f382.png", "audio": "125415ebad97.mp3", "yoAudio": null, "ex": {"ko": "나이가 많아요.", "de": "Er/Sie ist alt.", "en": "He/She is old.", "audio": "d8959ada5817.mp3"}}, {"word": "어른", "pron": "어른", "pos": "n.", "de": "Erwachsener", "en": "adult, grown-up", "yo": null, "note": "어른에게 [어르네게]: zu Erwachsenen spricht man höflich.", "img": "img/topik9f-1f9d1-1f474.png", "audio": "e07dd2dc1e92.mp3", "yoAudio": null, "ex": {"ko": "오빠는 어른이에요.", "de": "Mein Bruder ist erwachsen.", "en": "My brother is an adult.", "audio": "e839388c929b.mp3"}}, {"word": "인사하다", "pron": "인사하다", "pos": "v.", "de": "grüßen", "en": "to greet", "yo": "인사해요", "note": "인사 = Gruß. 께 = höfliches 에게 (선생님께, 어른께).", "img": "img/topik9f-1f647.png", "audio": "78094971d365.mp3", "yoAudio": "22e55d3f07d8.mp3", "ex": {"ko": "선생님께 인사해요.", "de": "Ich grüße die Lehrerin.", "en": "I greet the teacher.", "audio": "b02971725d3a.mp3"}}], "pairs": [["아이 🧒", "어른 🧑"], ["나이가 어려요 🐣", "나이가 많아요 🎂"], ["오빠 👧→👨", "형 👦→👨"]], "grammar": [["오빠 / 형 · 언니 / 누나", "Ältere Geschwister hängen vom Sprecher ab: Frau → 오빠 (Bruder), 언니 (Schwester); Mann → 형, 누나."], ["N 살", "Alter mit koreanischen Zahlen: 한 살, 다섯 살, 열아홉 살, 스물다섯 살. 몇 살이에요? = Wie alt?"], ["나이가 많다 / 어리다", "alt / jung (Personen). 어리다 → 어려요; vor Nomen: 어린 아이."], ["태어났어요", "„geboren werden“ steht meist in der Vergangenheit: 서울에서 태어났어요."], ["N께 인사해요", "께 = höfliches 에게 für Respektspersonen: 선생님께, 어른께."], ["Aussprache", "어른에게 [어르네게], 어린 아이 [어리나이]: der Endkonsonant bindet zum nächsten Vokal."]], "dialogueTitle": ["우리 가족", "Meine Familie"], "dialogue": [{"spk": "A", "ko": "동생이 있어요?", "de": "Hast du jüngere Geschwister?", "en": "Do you have a younger sibling?", "audio": "b93c84a3ae0c.mp3"}, {"spk": "B", "ko": "네, 여동생이 있어요. 나이가 어려요.", "de": "Ja, eine jüngere Schwester. Sie ist noch klein.", "en": "Yes, a younger sister. She is young.", "audio": "cd3d100cba81.mp3"}, {"spk": "A", "ko": "동생은 몇 살이에요?", "de": "Wie alt ist sie?", "en": "How old is she?", "audio": "4c4f723334b5.mp3"}, {"spk": "B", "ko": "다섯 살이에요.", "de": "Fünf Jahre.", "en": "She's five.", "audio": "1ee33c42fd08.mp3"}, {"spk": "A", "ko": "저는 오빠가 있어요.", "de": "Ich habe einen älteren Bruder.", "en": "I have an older brother.", "audio": "ffe070c966ac.mp3"}, {"spk": "B", "ko": "오빠는 나이가 많아요?", "de": "Ist dein Bruder viel älter?", "en": "Is your brother much older?", "audio": "2b9e6c759eea.mp3"}, {"spk": "A", "ko": "스물다섯 살이에요. 어른이에요!", "de": "Er ist 25. Ein Erwachsener!", "en": "He's 25. A grown-up!", "audio": "472a049dc420.mp3"}, {"spk": "B", "ko": "오빠는 서울에서 태어났어요?", "de": "Ist dein Bruder in Seoul geboren?", "en": "Was your brother born in Seoul?", "audio": "54f98072402d.mp3"}, {"spk": "A", "ko": "네, 우리 가족은 서울에서 태어났어요.", "de": "Ja, unsere Familie ist in Seoul geboren.", "en": "Yes, our family was born in Seoul.", "audio": "19cdd372166c.mp3"}], "storyTitle": ["동생이 태어나요", "Ein Geschwisterchen kommt"], "story": [{"ko": "저는 학생이에요.", "de": "Ich bin Schülerin.", "audio": "dcec686acd1e.mp3"}, {"ko": "저는 열아홉 살이에요.", "de": "Ich bin 19 Jahre alt.", "audio": "31cf10235c20.mp3"}, {"ko": "우리 엄마는 의사예요.", "de": "Meine Mama ist Ärztin.", "audio": "d9ee1b3fef4e.mp3"}, {"ko": "아빠는 회사원이에요.", "de": "Papa ist Angestellter.", "audio": "aeb012248a3d.mp3"}, {"ko": "저는 오빠가 있어요.", "de": "Ich habe einen älteren Bruder.", "audio": "ffe070c966ac.mp3"}, {"ko": "오빠는 스물다섯 살이에요. 어른이에요.", "de": "Mein Bruder ist 25. Er ist erwachsen.", "audio": "3c20f198131f.mp3"}, {"ko": "오늘 동생이 태어나요!", "de": "Heute wird mein Geschwisterchen geboren!", "audio": "b272fbe5571f.mp3"}, {"ko": "아이가 정말 작아요.", "de": "Das Kind ist wirklich klein.", "audio": "54a66925df44.mp3"}, {"ko": "저는 동생에게 인사해요. „안녕!“", "de": "Ich begrüße mein Geschwisterchen. „Hallo!“", "audio": "68e80053785f.mp3"}, {"ko": "어른들이 아이를 봐요.", "de": "Die Erwachsenen schauen das Kind an.", "audio": "97ac063d1285.mp3"}, {"ko": "동생은 나이가 어려요. 그런데 정말 귀여워요.", "de": "Mein Geschwisterchen ist noch so klein. Aber wirklich süß.", "audio": "bbb7bada1208.mp3"}, {"ko": "오늘은 정말 특별한 생일이에요.", "de": "Heute ist ein ganz besonderer Geburtstag.", "audio": "8451c0a98303.mp3"}], "dictation": [{"ko": "동생이 있어요.", "audio": "69240156a4bc.mp3"}, {"ko": "아이가 태어나요.", "audio": "6ec531b4ddf1.mp3"}, {"ko": "나이가 어려요.", "audio": "1be3c5aa3cdc.mp3"}, {"ko": "어른에게 인사해요.", "audio": "ac120dfa83b6.mp3"}, {"ko": "오빠는 스물다섯 살이에요.", "audio": "263c7c125e63.mp3"}]};
+const $ = (s, r=document) => r.querySelector(s);
+let cur = null;
+let runId = 0;
+const src = f => "audio/" + window.audioDir + "/" + f;
+function play(file) { runId++; if (cur) cur.pause(); cur = new Audio(src(file)); cur.play(); }
+function stopAudio() { runId++; if (cur) cur.pause(); document.querySelectorAll(".story.now").forEach(e => e.classList.remove("now")); }
+const btn = f => `<button class="play" onclick="play('${f}')">🔊</button>`;
+const shuffle = a => a.map(x => [Math.random(), x]).sort((p, q) => p[0] - q[0]).map(x => x[1]);
+
+const TABS = {
+  "Wörter": () => `<p class="muted">Rate das Wort zum Bild, dann tippe auf den unscharfen Bereich. Tippe 🔊 zum Anhören.
+      <button class="btn" onclick="document.querySelectorAll('.reveal').forEach(e=>e.classList.toggle('open', this.dataset.s!=='1')); this.dataset.s=this.dataset.s==='1'?'':'1'">Alle zeigen/verbergen</button></p><div class="words">` +
+    DATA.words.map(w => `<div class="card word">
+      <img src="${w.img}" alt="">
+      <div class="reveal" onclick="if(!event.target.closest('button'))this.classList.toggle('open')">
+      <div class="k">${w.word} ${btn(w.audio)}</div>
+      <div class="muted">[${w.pron}] · ${w.pos}</div>
+      ${w.yo ? `<div class="yo">${w.yo} ${btn(w.yoAudio)}</div>` : ""}
+      <div class="de">${w.de}<br><span class="muted">${w.en}</span></div>
+      <div class="ex">${btn(w.ex.audio)}<div>${w.ex.ko}<br><span class="muted">${w.ex.de}</span></div></div>
+      <div class="note">${w.note}</div></div></div>`).join("") + `</div>`,
+
+  "Zusammenhang": () => `<div class="card"><h3>Gegensatzpaare</h3>` +
+      DATA.pairs.map(p => `<div class="pair"><div class="big">${p[0]}</div><div class="big">${p[1]}</div></div>`).join("") + `</div>
+    <div class="card"><h3>Grammatik-Notizen</h3><table>` +
+      DATA.grammar.map(g => `<tr><td><b>${g[0]}</b></td><td>${g[1]}</td></tr>`).join("") + `</table></div>`,
+
+  "Dialog": () => `<div class="card"><h3>${DATA.dialogueTitle[0]} <span class="muted">${DATA.dialogueTitle[1]}</span></h3>` +
+    DATA.dialogue.map(d => `<div class="bubble ${d.spk}">${btn(d.audio)}<div class="t"><div class="ko reveal" onclick="this.classList.toggle('open')">${d.ko}</div>
+      <div class="muted hidden-t" onclick="this.classList.toggle('open')">${d.de}<br>${d.en}</div></div></div>`).join("") +
+    `<button class="btn" onclick="playAll()">▶ Alles abspielen</button> <button class="btn" onclick="document.querySelectorAll('.bubble .reveal, .bubble .hidden-t').forEach(e=>e.classList.toggle('open', this.dataset.s!=='1')); this.dataset.s=this.dataset.s==='1'?'':'1'">Alle zeigen/verbergen</button></div>`,
+
+  "Geschichte": () => `<div class="card"><h3>${DATA.storyTitle[0]} <span class="muted">${DATA.storyTitle[1]}</span></h3>
+      <p class="muted">Höre Satz für Satz. Tippe auf den unscharfen Satz, um ihn zu sehen – die Übersetzung darunter separat.</p>
+      <p><button class="btn" onclick="playStory()">▶ Ganze Geschichte</button> <button class="btn" onclick="stopAudio()">⏹ Stop</button>
+      <button class="btn" onclick="document.querySelectorAll('.story .reveal').forEach(e=>e.classList.toggle('open', this.dataset.s!=='1')); this.dataset.s=this.dataset.s==='1'?'':'1'">Alle zeigen/verbergen</button></p>` +
+    DATA.story.map((s, i) => `<div class="story" id="st${i}"><span class="muted">${i + 1}</span>${btn(s.audio)}<div>
+      <div class="reveal ko" onclick="this.classList.toggle('open')">${s.ko}</div>
+      <div class="reveal muted" onclick="this.classList.toggle('open')">${s.de}</div></div></div>`).join("") + `</div>`,
+
+  "Diktat": () => `<div id="dict"></div>`,
+};
+
+function dictation() {
+  const el = $("#dict"); let i = 0;
+  const show = () => {
+    if (i >= DATA.dictation.length) { el.innerHTML = `<div class="card"><div class="big">🎉</div><button class="btn" onclick="dictation()">Nochmal</button></div>`; i = 0; return; }
+    const d = DATA.dictation[i];
+    el.innerHTML = `<div class="card"><div class="muted">${i + 1} / ${DATA.dictation.length} · Höre und schreibe</div>
+      <div class="big">${btn(d.audio)}</div><input type="text" id="inp" autocomplete="off" placeholder="한국어…">
+      <p id="res" class="muted"></p><div id="act"><button class="btn" id="chk">Prüfen</button></div></div>`;
+    play(d.audio);
+    const norm = s => s.replace(/[\s.?!]/g, "");
+    const check = () => {
+      const ok = norm($("#inp").value) === norm(d.ko);
+      if (ok) { $("#res").innerHTML = "✅ Richtig!"; setTimeout(() => { i++; show(); }, 800); return; }
+      $("#res").innerHTML = `❌ Nicht ganz. Richtig: <b>${d.ko}</b>`;
+      $("#act").innerHTML = `<button class="btn" id="retry">↻ Nochmal versuchen</button> <button class="btn" id="next">Weiter →</button>`;
+      $("#retry").onclick = () => { $("#res").innerHTML = ""; $("#act").innerHTML = `<button class="btn" id="chk">Prüfen</button>`; $("#chk").onclick = check; $("#inp").value = ""; $("#inp").focus(); play(d.audio); };
+      $("#next").onclick = () => { i++; show(); };
+    };
+    $("#chk").onclick = check;
+    $("#inp").onkeydown = e => { if (e.key === "Enter" && $("#chk")) check(); };
+  };
+  show();
+}
+
+function playStory() {
+  stopAudio(); const id = runId; let i = 0;
+  const next = () => {
+    document.querySelectorAll(".story.now").forEach(e => e.classList.remove("now"));
+    if (id !== runId || i >= DATA.story.length) return;
+    const el = document.getElementById("st" + i); el.classList.add("now"); el.scrollIntoView({ block: "center", behavior: "smooth" });
+    cur = new Audio(src(DATA.story[i++].audio));
+    cur.onended = () => setTimeout(() => { if (id === runId) next(); }, 2500);
+    cur.play();
+  };
+  next();
+}
+
+function playAll() {
+  let i = 0;
+  const next = () => { if (i >= DATA.dialogue.length) return; cur = new Audio(src(DATA.dialogue[i++].audio)); cur.onended = () => setTimeout(next, 1800); cur.play(); };
+  next();
+}
+
+function tab(name) {
+  document.querySelectorAll("#nav button").forEach(b => b.classList.toggle("active", b.textContent === name));
+  $("#main").innerHTML = TABS[name]();
+  if (name === "Diktat") dictation();
+}
+$("#nav").innerHTML = Object.keys(TABS).map(n => `<button onclick="tab('${n}')">${n}</button>`).join("");
+tab("Wörter");
+</script>
+</body>
+</html>

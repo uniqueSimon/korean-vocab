@@ -1,0 +1,6 @@
+/*
+!/.gitignore
+!/index.html
+!/lessons/
+.DS_Store
+__pycache__/

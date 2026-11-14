@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Korean · Lektion 4</title>
+<style>
+  :root { --bg:#f6f8f4; --card:#fff; --ink:#222; --muted:#777; --accent:#2e8b57; --ok:#1e9e5a; --bad:#d64545; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; background:var(--bg); color:var(--ink); }
+  header { position:sticky; top:0; z-index:5; background:var(--card); border-bottom:1px solid #dde5d8; padding:10px 16px; }
+  header h1 { font-size:18px; margin:0 0 8px; }
+  nav { display:flex; gap:6px; flex-wrap:wrap; }
+  nav button { border:1px solid #ccc; background:#fff; border-radius:18px; padding:6px 12px; cursor:pointer; font-size:14px; }
+  nav button.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+  header { display:flex; flex-wrap:wrap; align-items:flex-start; gap:4px 12px; }
+  header h1 { flex:1 1 100%; }
+  header nav { flex:1 1 auto; }
+  .zoom { display:flex; align-items:center; gap:6px; font-size:13px; color:var(--muted); }
+  .spd { display:flex; align-items:center; gap:4px; margin-left:8px; } .spd input { width:90px; } #sv { min-width:70px; }
+  .zoom button { border:1px solid #ccc; background:#fff; border-radius:8px; padding:5px 10px; cursor:pointer; font-size:14px; }
+  main { max-width:820px; margin:0 auto; padding:16px; }
+  .card { background:var(--card); border-radius:12px; padding:16px; margin-bottom:14px; box-shadow:0 1px 3px rgba(0,0,0,.06); }
+  .muted { color:var(--muted); font-size:13px; }
+  .btn { border:none; background:var(--accent); color:#fff; padding:8px 14px; border-radius:8px; cursor:pointer; font-size:15px; }
+  .play { border:none; background:#e3f1e7; border-radius:50%; width:34px; height:34px; cursor:pointer; flex:none; }
+  .words { display:grid; grid-template-columns:repeat(auto-fill, minmax(240px,1fr)); gap:12px; }
+  .word { text-align:center; }
+  .word img { width:100%; max-height:150px; object-fit:contain; border-radius:8px; background:#f3f7ef; }
+  .word .k { font-size:30px; font-weight:600; margin-top:6px; }
+  .word .yo { color:var(--accent); }
+  .word .de { font-size:17px; }
+  .word .ex { margin-top:8px; padding-top:8px; border-top:1px dashed #e0e0e0; font-size:18px; text-align:left; display:flex; gap:8px; align-items:flex-start; }
+  .word .note { font-size:12px; color:var(--muted); margin-top:6px; text-align:left; }
+  .reveal { cursor:pointer; filter:blur(8px); user-select:none; } .reveal.open { filter:none; }
+  .story { display:flex; gap:10px; align-items:flex-start; padding:10px 8px; border-bottom:1px dashed #e0e0e0; border-radius:8px; }
+  .story > .muted { width:20px; padding-top:8px; text-align:right; }
+  .story .ko { font-size:22px; } .story.now { background:#eef8f0; }
+  .hidden-t { filter:blur(6px); cursor:pointer; } .hidden-t.open { filter:none; }
+  .bubble { display:flex; gap:8px; align-items:flex-start; margin:10px 0; }
+  .bubble.B { flex-direction:row-reverse; text-align:right; }
+  .bubble .t { background:#eef8f0; border-radius:12px; padding:8px 12px; max-width:80%; }
+  .bubble.B .t { background:#eef2fb; }
+  .bubble .ko { font-size:21px; }
+  input[type=text] { font-size:20px; padding:8px; width:100%; border:1px solid #ccc; border-radius:8px; }
+  .big { font-size:28px; text-align:center; margin:10px 0; }
+  table { width:100%; border-collapse:collapse; } td, th { padding:6px; border-bottom:1px solid #eee; text-align:left; }
+  .pair { display:flex; gap:10px; } .pair > div { flex:1; text-align:center; background:#f3f7ef; border-radius:10px; padding:10px; }
+  footer { text-align:center; color:var(--muted); font-size:12px; padding:20px; }
+</style>
+</head>
+<body>
+<header>
+  <h1><span class="muted">Lektion 4 ·</span> 🎬 영화와 모양 — Film, Form &amp; Vergleich <span class="muted">(TOPIK #8: 영화 · 만화 · 제목 · 글 · 짓다 · 모양 · 별 · 다르다 · 같다 · 서로 · 열심히)</span></h1>
+  <nav id="nav"></nav>
+  <div class="zoom"><button id="zm" aria-label="Verkleinern">A−</button><span id="zv"></span><button id="zp" aria-label="Vergrößern">A+</button>
+    <label class="spd">🐢 Tempo <input type="range" id="spd" min="0" max="3" step="1"> <span id="sv"></span></label></div>
+</header>
+<main id="main"></main>
+<script>
+(function(){
+  var z=parseFloat(localStorage.getItem('pageZoom'))||1, m=document.getElementById('main'), v=document.getElementById('zv');
+  function set(x){ z=Math.min(2,Math.max(0.8,Math.round(x*10)/10)); m.style.zoom=z; v.textContent=Math.round(z*100)+'%'; localStorage.setItem('pageZoom',z); }
+  document.getElementById('zm').onclick=function(){set(z-0.1)};
+  document.getElementById('zp').onclick=function(){set(z+0.1)};
+  set(z);
+  var S=[["s10","schnell"],["s25","normal"],["s40","langsam"],["s50","sehr langsam"]], r=document.getElementById('spd'), sv=document.getElementById('sv');
+  var si=localStorage.getItem('audioSpeed'); si=si===null?2:+si;
+  function setS(i){ r.value=i; window.audioDir=S[i][0]; sv.textContent=S[i][1]; localStorage.setItem('audioSpeed',i); }
+  r.oninput=function(){setS(+r.value)};
+  setS(si);
+})();
+</script>
+<footer>Pictures: <a href="https://openmoji.org">OpenMoji</a> (CC BY-SA 4.0) · Audio: Edge TTS · Anki deck: anki/topik-8-movies-shapes.apkg</footer>
+<script>
+const DATA = {"words": [{"word": "영화", "pron": "영화", "pos": "n.", "de": "Film", "en": "movie", "yo": null, "note": "영화를 보다 = einen Film sehen (Objekt 을/를).", "img": "img/topik8m-1f3ac.png", "audio": "add6a6fc8007.mp3", "yoAudio": null, "ex": {"ko": "영화를 봐요.", "de": "Ich schaue einen Film.", "en": "I watch a movie.", "audio": "bfa87419d4a2.mp3"}}, {"word": "만화", "pron": "만화", "pos": "n.", "de": "Comic, Manga", "en": "comic, cartoon", "yo": null, "note": "만화 영화 = Zeichentrickfilm.", "img": "img/topik8m-1f4d6.png", "audio": "113702b78faa.mp3", "yoAudio": null, "ex": {"ko": "만화를 읽어요.", "de": "Ich lese einen Comic.", "en": "I read a comic.", "audio": "4e553017a639.mp3"}}, {"word": "제목", "pron": "제목", "pos": "n.", "de": "Titel", "en": "title", "yo": null, "note": "N + 제목 = Titel von N (영화 제목, 책 제목).", "img": "img/topik8m-1f3f7.png", "audio": "a42d1fbe684c.mp3", "yoAudio": null, "ex": {"ko": "영화 제목이 뭐예요?", "de": "Wie heißt der Film? (Was ist der Titel?)", "en": "What is the movie's title?", "audio": "10a05d395f95.mp3"}}, {"word": "글", "pron": "글", "pos": "n.", "de": "Text, Schrift", "en": "writing, text", "yo": null, "note": "글을 쓰다 = Text schreiben; 글자 = Buchstabe.", "img": "img/topik8m-1f4dd.png", "audio": "2ea73ee93268.mp3", "yoAudio": null, "ex": {"ko": "글을 써요.", "de": "Ich schreibe einen Text.", "en": "I write a text.", "audio": "392b3560c388.mp3"}}, {"word": "짓다", "pron": "짇따", "pos": "v.", "de": "bauen; (Namen) geben", "en": "to build, make", "yo": "지어요", "note": "ㅅ-unregelmäßig: 짓 → 지어요. Auch: 집을 짓다 = ein Haus bauen.", "img": "img/topik8m-1f3d7.png", "audio": "c451fae42384.mp3", "yoAudio": "02e1a3612d7e.mp3", "ex": {"ko": "제목을 지어요.", "de": "Ich denke mir einen Titel aus.", "en": "I make up a title.", "audio": "f8a7b498034d.mp3"}}, {"word": "모양", "pron": "모양", "pos": "n.", "de": "Form, Gestalt", "en": "shape", "yo": null, "note": "N 모양 = Form von N (별 모양, 하트 모양).", "img": "img/topik8m-1f537.png", "audio": "4d5ac384cb84.mp3", "yoAudio": null, "ex": {"ko": "별 모양이에요.", "de": "Es hat Sternform.", "en": "It's star-shaped.", "audio": "867512d6776d.mp3"}}, {"word": "별", "pron": "별", "pos": "n.", "de": "Stern", "en": "star", "yo": null, "note": "별이 빛나다 = ein Stern leuchtet.", "img": "img/topik8m-2b50.png", "audio": "950c6db23b0b.mp3", "yoAudio": null, "ex": {"ko": "별이 예뻐요.", "de": "Die Sterne sind schön.", "en": "The stars are pretty.", "audio": "5e1554cc7306.mp3"}}, {"word": "다르다", "pron": "다르다", "pos": "adj.", "de": "verschieden, anders sein", "en": "to be different", "yo": "달라요", "note": "르-unregelmäßig: 달라요. NICHT 틀리다 (= falsch sein)!", "img": "img/topik8m-1f34e-1f34a.png", "audio": "ad14f6446c29.mp3", "yoAudio": "7f32e767ee5d.mp3", "ex": {"ko": "모양이 달라요.", "de": "Die Form ist anders.", "en": "The shape is different.", "audio": "baf6f90540ec.mp3"}}, {"word": "같다", "pron": "갇따", "pos": "adj.", "de": "gleich sein", "en": "to be the same", "yo": "같아요", "note": "A와 같아요 = gleich wie A. Gegenteil: 다르다.", "img": "img/topik8m-1f34e-1f34e.png", "audio": "b4349178d324.mp3", "yoAudio": "a50e5ac6cfbf.mp3", "ex": {"ko": "모양이 같아요.", "de": "Die Form ist gleich.", "en": "The shape is the same.", "audio": "16cbc7ce94e1.mp3"}}, {"word": "서로", "pron": "서로", "pos": "adv.", "de": "einander, gegenseitig", "en": "each other", "yo": null, "note": "Adverb vor dem Verb: 서로 인사해요 = einander grüßen.", "img": "img/topik8m-1f91d.png", "audio": "58ba89eef4f5.mp3", "yoAudio": null, "ex": {"ko": "서로 좋아해요.", "de": "Sie mögen einander.", "en": "They like each other.", "audio": "c4f24bcfd78d.mp3"}}, {"word": "열심히", "pron": "열씨미", "pos": "adv.", "de": "fleißig, eifrig", "en": "hard, diligently", "yo": null, "note": "Vor dem Verb: 열심히 일해요 / 공부해요.", "img": "img/topik8m-1f4aa.png", "audio": "4f4d74c2af4f.mp3", "yoAudio": null, "ex": {"ko": "열심히 공부해요.", "de": "Ich lerne fleißig.", "en": "I study hard.", "audio": "89f2f4cb4e63.mp3"}}], "pairs": [["같다 🍎🍎", "다르다 🍎🍊"], ["영화 🎬", "만화 📖"], ["제목 🏷️", "글 📝"]], "grammar": [["A와/과 같아요", "„gleich wie“: 이것은 저것과 같아요. 같다 = gleich, 다르다 = anders (A와 달라요)."], ["다르다 → 달라요", "르-unregelmäßig: 다르 + 아요 → 달라요 (wie 모르다 → 몰라요)."], ["Adjektiv + 모양", "모양이 같아요 / 달라요; 별 모양 = Sternform (N + 모양)."], ["서로", "Adverb „einander“: 서로 좋아해요. Steht vor dem Verb."], ["열심히", "Adverb „fleißig“: 열심히 공부해요 / 일해요. Vor dem Verb."], ["짓다 → 지어요", "ㅅ-unregelmäßig: ㅅ fällt vor Vokal weg (제목을 지어요, 집을 지어요)."], ["Aussprache", "짓다 [짇따], 같다 [갇따], 열심히 [열씨미]."]], "dialogueTitle": ["영화 제목", "Filmtitel"], "dialogue": [{"spk": "A", "ko": "어제 영화를 봤어요.", "de": "Gestern habe ich einen Film gesehen.", "en": "I watched a movie yesterday.", "audio": "5aa5f04c95c9.mp3"}, {"spk": "B", "ko": "영화 제목이 뭐예요?", "de": "Wie heißt der Film?", "en": "What's the movie's title?", "audio": "e9a32d722b12.mp3"}, {"spk": "A", "ko": "「별」이에요. 만화 영화예요.", "de": "„Stern“. Es ist ein Zeichentrickfilm.", "en": "It's \"Star\". It's an animated movie.", "audio": "edaad42f620b.mp3"}, {"spk": "B", "ko": "그래요? 저는 만화를 좋아해요.", "de": "Echt? Ich mag Comics.", "en": "Really? I like comics.", "audio": "f367e6f25c9a.mp3"}, {"spk": "A", "ko": "그림 모양이 정말 예뻐요. 별 모양이에요.", "de": "Die Zeichnungen sind wirklich schön. Sie haben Sternform.", "en": "The drawings are really pretty. Star-shaped.", "audio": "f2bd1df6e111.mp3"}, {"spk": "B", "ko": "저는 글을 써요. 제목을 지어요.", "de": "Ich schreibe Texte. Ich erfinde Titel.", "en": "I write texts. I make up titles.", "audio": "87cad56cf7f5.mp3"}, {"spk": "A", "ko": "우리는 취미가 같아요. 서로 열심히 해요!", "de": "Wir haben dasselbe Hobby. Lasst uns beide fleißig sein!", "en": "We have the same hobby. Let's both work hard!", "audio": "20f25d27bc95.mp3"}], "storyTitle": ["영화 「별」", "Der Film „Stern“"], "story": [{"ko": "저는 친구랑 영화를 봐요.", "de": "Ich sehe mit einem Freund einen Film.", "audio": "284d19929c66.mp3"}, {"ko": "우리는 표와 팝콘을 사요.", "de": "Wir kaufen Tickets und Popcorn.", "audio": "9f865c21c1d0.mp3"}, {"ko": "영화 제목은 「별」이에요.", "de": "Der Filmtitel ist „Stern“.", "audio": "d96c47e6fbbb.mp3"}, {"ko": "만화 영화예요.", "de": "Es ist ein Zeichentrickfilm.", "audio": "32c58d6968e7.mp3"}, {"ko": "영화에 별이 많아요.", "de": "Im Film gibt es viele Sterne.", "audio": "c8cca1daeb97.mp3"}, {"ko": "큰 별과 작은 별이 있어요.", "de": "Es gibt große und kleine Sterne.", "audio": "6af0f68fb869.mp3"}, {"ko": "별의 모양이 서로 달라요.", "de": "Die Sterne haben verschiedene Formen.", "audio": "ab66dd254144.mp3"}, {"ko": "그런데 두 별은 모양이 같아요.", "de": "Aber zwei Sterne haben die gleiche Form.", "audio": "b25e8ae5f160.mp3"}, {"ko": "영화가 끝나요.", "de": "Der Film ist zu Ende.", "audio": "165e40a4aa4d.mp3"}, {"ko": "제 친구는 작가예요.", "de": "Mein Freund ist Autor.", "audio": "267f3848f3d5.mp3"}, {"ko": "친구는 카페에서 열심히 글을 써요.", "de": "Mein Freund schreibt im Café fleißig einen Text.", "audio": "a44721c23fab.mp3"}, {"ko": "저는 그 글의 제목을 지어요.", "de": "Ich denke mir den Titel für den Text aus.", "audio": "9758030358dd.mp3"}], "dictation": [{"ko": "영화를 봐요.", "audio": "bfa87419d4a2.mp3"}, {"ko": "모양이 달라요.", "audio": "baf6f90540ec.mp3"}, {"ko": "모양이 같아요.", "audio": "16cbc7ce94e1.mp3"}, {"ko": "제목을 지어요.", "audio": "f8a7b498034d.mp3"}, {"ko": "열심히 공부해요.", "audio": "89f2f4cb4e63.mp3"}]};
+const $ = (s, r=document) => r.querySelector(s);
+let cur = null;
+let runId = 0;
+const src = f => "audio/" + window.audioDir + "/" + f;
+function play(file) { runId++; if (cur) cur.pause(); cur = new Audio(src(file)); cur.play(); }
+function stopAudio() { runId++; if (cur) cur.pause(); document.querySelectorAll(".story.now").forEach(e => e.classList.remove("now")); }
+const btn = f => `<button class="play" onclick="play('${f}')">🔊</button>`;
+const shuffle = a => a.map(x => [Math.random(), x]).sort((p, q) => p[0] - q[0]).map(x => x[1]);
+
+const TABS = {
+  "Wörter": () => `<p class="muted">Rate das Wort zum Bild, dann tippe auf den unscharfen Bereich. Tippe 🔊 zum Anhören.
+      <button class="btn" onclick="document.querySelectorAll('.reveal').forEach(e=>e.classList.toggle('open', this.dataset.s!=='1')); this.dataset.s=this.dataset.s==='1'?'':'1'">Alle zeigen/verbergen</button></p><div class="words">` +
+    DATA.words.map(w => `<div class="card word">
+      <img src="${w.img}" alt="">
+      <div class="reveal" onclick="if(!event.target.closest('button'))this.classList.toggle('open')">
+      <div class="k">${w.word} ${btn(w.audio)}</div>
+      <div class="muted">[${w.pron}] · ${w.pos}</div>
+      ${w.yo ? `<div class="yo">${w.yo} ${btn(w.yoAudio)}</div>` : ""}
+      <div class="de">${w.de}<br><span class="muted">${w.en}</span></div>
+      <div class="ex">${btn(w.ex.audio)}<div>${w.ex.ko}<br><span class="muted">${w.ex.de}</span></div></div>
+      <div class="note">${w.note}</div></div></div>`).join("") + `</div>`,
+
+  "Zusammenhang": () => `<div class="card"><h3>Gegensatzpaare</h3>` +
+      DATA.pairs.map(p => `<div class="pair"><div class="big">${p[0]}</div><div class="big">${p[1]}</div></div>`).join("") + `</div>
+    <div class="card"><h3>Grammatik-Notizen</h3><table>` +
+      DATA.grammar.map(g => `<tr><td><b>${g[0]}</b></td><td>${g[1]}</td></tr>`).join("") + `</table></div>`,
+
+  "Dialog": () => `<div class="card"><h3>${DATA.dialogueTitle[0]} <span class="muted">${DATA.dialogueTitle[1]}</span></h3>` +
+    DATA.dialogue.map(d => `<div class="bubble ${d.spk}">${btn(d.audio)}<div class="t"><div class="ko reveal" onclick="this.classList.toggle('open')">${d.ko}</div>
+      <div class="muted hidden-t" onclick="this.classList.toggle('open')">${d.de}<br>${d.en}</div></div></div>`).join("") +
+    `<button class="btn" onclick="playAll()">▶ Alles abspielen</button> <button class="btn" onclick="document.querySelectorAll('.bubble .reveal, .bubble .hidden-t').forEach(e=>e.classList.toggle('open', this.dataset.s!=='1')); this.dataset.s=this.dataset.s==='1'?'':'1'">Alle zeigen/verbergen</button></div>`,
+
+  "Geschichte": () => `<div class="card"><h3>${DATA.storyTitle[0]} <span class="muted">${DATA.storyTitle[1]}</span></h3>
+      <p class="muted">Höre Satz für Satz. Tippe auf den unscharfen Satz, um ihn zu sehen – die Übersetzung darunter separat.</p>
+      <p><button class="btn" onclick="playStory()">▶ Ganze Geschichte</button> <button class="btn" onclick="stopAudio()">⏹ Stop</button>
+      <button class="btn" onclick="document.querySelectorAll('.story .reveal').forEach(e=>e.classList.toggle('open', this.dataset.s!=='1')); this.dataset.s=this.dataset.s==='1'?'':'1'">Alle zeigen/verbergen</button></p>` +
+    DATA.story.map((s, i) => `<div class="story" id="st${i}"><span class="muted">${i + 1}</span>${btn(s.audio)}<div>
+      <div class="reveal ko" onclick="this.classList.toggle('open')">${s.ko}</div>
+      <div class="reveal muted" onclick="this.classList.toggle('open')">${s.de}</div></div></div>`).join("") + `</div>`,
+
+  "Diktat": () => `<div id="dict"></div>`,
+};
+
+function dictation() {
+  const el = $("#dict"); let i = 0;
+  const show = () => {
+    if (i >= DATA.dictation.length) { el.innerHTML = `<div class="card"><div class="big">🎉</div><button class="btn" onclick="dictation()">Nochmal</button></div>`; i = 0; return; }
+    const d = DATA.dictation[i];
+    el.innerHTML = `<div class="card"><div class="muted">${i + 1} / ${DATA.dictation.length} · Höre und schreibe</div>
+      <div class="big">${btn(d.audio)}</div><input type="text" id="inp" autocomplete="off" placeholder="한국어…">
+      <p id="res" class="muted"></p><div id="act"><button class="btn" id="chk">Prüfen</button></div></div>`;
+    play(d.audio);
+    const norm = s => s.replace(/[\s.?!]/g, "");
+    const check = () => {
+      const ok = norm($("#inp").value) === norm(d.ko);
+      if (ok) { $("#res").innerHTML = "✅ Richtig!"; setTimeout(() => { i++; show(); }, 800); return; }
+      $("#res").innerHTML = `❌ Nicht ganz. Richtig: <b>${d.ko}</b>`;
+      $("#act").innerHTML = `<button class="btn" id="retry">↻ Nochmal versuchen</button> <button class="btn" id="next">Weiter →</button>`;
+      $("#retry").onclick = () => { $("#res").innerHTML = ""; $("#act").innerHTML = `<button class="btn" id="chk">Prüfen</button>`; $("#chk").onclick = check; $("#inp").value = ""; $("#inp").focus(); play(d.audio); };
+      $("#next").onclick = () => { i++; show(); };
+    };
+    $("#chk").onclick = check;
+    $("#inp").onkeydown = e => { if (e.key === "Enter" && $("#chk")) check(); };
+  };
+  show();
+}
+
+function playStory() {
+  stopAudio(); const id = runId; let i = 0;
+  const next = () => {
+    document.querySelectorAll(".story.now").forEach(e => e.classList.remove("now"));
+    if (id !== runId || i >= DATA.story.length) return;
+    const el = document.getElementById("st" + i); el.classList.add("now"); el.scrollIntoView({ block: "center", behavior: "smooth" });
+    cur = new Audio(src(DATA.story[i++].audio));
+    cur.onended = () => setTimeout(() => { if (id === runId) next(); }, 2500);
+    cur.play();
+  };
+  next();
+}
+
+function playAll() {
+  let i = 0;
+  const next = () => { if (i >= DATA.dialogue.length) return; cur = new Audio(src(DATA.dialogue[i++].audio)); cur.onended = () => setTimeout(next, 1800); cur.play(); };
+  next();
+}
+
+function tab(name) {
+  document.querySelectorAll("#nav button").forEach(b => b.classList.toggle("active", b.textContent === name));
+  $("#main").innerHTML = TABS[name]();
+  if (name === "Diktat") dictation();
+}
+$("#nav").innerHTML = Object.keys(TABS).map(n => `<button onclick="tab('${n}')">${n}</button>`).join("");
+tab("Wörter");
+</script>
+</body>
+</html>
