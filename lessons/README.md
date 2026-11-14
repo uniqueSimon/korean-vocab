@@ -28,3 +28,9 @@ lessons/
 
 The build checks that every word is in the given TOPIK PDF and isn't already used in another lesson.
 Anki notes get a fixed GUID per word, so re-importing a deck updates the cards instead of duplicating them.
+
+## Veröffentlichen (iPhone)
+
+Live: https://uniquesimon.github.io/korean-vocab/
+
+Nach einem Build: `git add -A && git commit -m "Lektion N" && git push` – GitHub Pages aktualisiert sich nach ~1 Minute.
