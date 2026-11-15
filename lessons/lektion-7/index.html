@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Korean · Lektion 7</title>
+<style>
+  :root { --bg:#f6f8f4; --card:#fff; --ink:#222; --muted:#777; --accent:#2e8b57; --ok:#1e9e5a; --bad:#d64545; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; background:var(--bg); color:var(--ink); }
+  header { position:sticky; top:0; z-index:5; background:var(--card); border-bottom:1px solid #dde5d8; padding:10px 16px; }
+  header h1 { font-size:18px; margin:0 0 8px; }
+  nav { display:flex; gap:6px; flex-wrap:nowrap; overflow-x:auto; padding-bottom:4px; -webkit-overflow-scrolling:touch; }
+  nav button { flex:none; white-space:nowrap; border:1px solid #ccc; background:#fff; border-radius:18px; padding:6px 12px; cursor:pointer; font-size:14px; }
+  nav button.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+  header { display:flex; flex-wrap:wrap; align-items:flex-start; gap:4px 12px; }
+  header h1 { flex:1 1 100%; }
+  header nav { flex:1 1 auto; min-width:0; }
+  .zoom { display:flex; align-items:center; gap:6px; font-size:13px; color:var(--muted); }
+  .spd { display:flex; align-items:center; gap:4px; margin-left:8px; white-space:nowrap; } .spd input { width:90px; } #sv { min-width:70px; }
+  .zoom button { border:1px solid #ccc; background:#fff; border-radius:8px; padding:5px 10px; cursor:pointer; font-size:14px; }
+  main { max-width:820px; margin:0 auto; padding:16px; }
+  .card { background:var(--card); border-radius:12px; padding:16px; margin-bottom:14px; box-shadow:0 1px 3px rgba(0,0,0,.06); }
+  .muted { color:var(--muted); font-size:13px; }
+  .btn { border:none; background:var(--accent); color:#fff; padding:8px 14px; border-radius:8px; cursor:pointer; font-size:15px; }
+  .play { border:none; background:#e3f1e7; border-radius:50%; width:34px; height:34px; cursor:pointer; flex:none; }
+  .words { display:grid; grid-template-columns:repeat(auto-fill, minmax(240px,1fr)); gap:12px; }
+  .word { text-align:center; }
+  .word img { width:100%; max-height:150px; object-fit:contain; border-radius:8px; background:#f3f7ef; }
+  .word .k { font-size:30px; font-weight:600; margin-top:6px; }
+  .word .yo { color:var(--accent); }
+  .word .de { font-size:17px; }
+  .word .ex { margin-top:8px; padding-top:8px; border-top:1px dashed #e0e0e0; font-size:18px; text-align:left; display:flex; gap:8px; align-items:flex-start; }
+  .word .note { font-size:12px; color:var(--muted); margin-top:6px; text-align:left; }
+  .reveal { cursor:pointer; filter:blur(8px); user-select:none; } .reveal.open { filter:none; }
+  .story { display:flex; gap:10px; align-items:flex-start; padding:10px 8px; border-bottom:1px dashed #e0e0e0; border-radius:8px; }
+  .story > .muted { width:20px; padding-top:8px; text-align:right; }
+  .story .ko { font-size:22px; } .story.now { background:#eef8f0; }
+  .hidden-t { filter:blur(6px); cursor:pointer; } .hidden-t.open { filter:none; }
+  .bubble { display:flex; gap:8px; align-items:flex-start; margin:10px 0; }
+  .bubble.B { flex-direction:row-reverse; text-align:right; }
+  .bubble .t { background:#eef8f0; border-radius:12px; padding:8px 12px; max-width:80%; }
+  .bubble.B .t { background:#eef2fb; }
+  .bubble .ko { font-size:21px; }
+  input[type=text] { font-size:20px; padding:8px; width:100%; border:1px solid #ccc; border-radius:8px; }
+  .big { font-size:28px; text-align:center; margin:10px 0; }
+  table { width:100%; border-collapse:collapse; } td, th { padding:6px; border-bottom:1px solid #eee; text-align:left; }
+  .pair { display:flex; gap:10px; } .pair > div { flex:1; text-align:center; background:#f3f7ef; border-radius:10px; padding:10px; }
+  footer { text-align:center; color:var(--muted); font-size:12px; padding:20px; }
+</style>
+</head>
+<body>
+<header>
+  <h1><span class="muted">Lektion 7 ·</span> 🏆 정답과 성공 — Wahrheit, Wahl &amp; Erfolg <span class="muted">(TOPIK #10: 진실 · 밝히다 · 사실 · 정답 · 고르다 · 직접 · 실패하다 · 성공하다 · 다이어트 · 결심)</span></h1>
+  <nav id="nav"></nav>
+  <div class="zoom"><button id="zm" aria-label="Verkleinern">A−</button><span id="zv"></span><button id="zp" aria-label="Vergrößern">A+</button>
+    <label class="spd">🐢 Tempo <input type="range" id="spd" min="0" max="3" step="1"> <span id="sv"></span></label></div>
+</header>
+<main id="main"></main>
+<script>
+(function(){
+  var z=parseFloat(localStorage.getItem('pageZoom'))||1, m=document.getElementById('main'), v=document.getElementById('zv');
+  function set(x){ z=Math.min(2,Math.max(0.8,Math.round(x*10)/10)); m.style.zoom=z; v.textContent=Math.round(z*100)+'%'; localStorage.setItem('pageZoom',z); }
+  document.getElementById('zm').onclick=function(){set(z-0.1)};
+  document.getElementById('zp').onclick=function(){set(z+0.1)};
+  set(z);
+  var S=[["s10","schnell"],["s25","normal"],["s40","langsam"],["s50","sehr langsam"]], r=document.getElementById('spd'), sv=document.getElementById('sv');
+  var si=localStorage.getItem('audioSpeed'); si=si===null?2:+si;
+  function setS(i){ r.value=i; window.audioDir=S[i][0]; sv.textContent=S[i][1]; localStorage.setItem('audioSpeed',i); }
+  r.oninput=function(){setS(+r.value)};
+  setS(si);
+})();
+</script>
+<footer>Pictures: <a href="https://openmoji.org">OpenMoji</a> (CC BY-SA 4.0) · Audio: Edge TTS · Anki deck: anki/topik-10-truth-success.apkg</footer>
+<script>
+const DATA = {"words": [{"word": "진실", "pron": "진실", "pos": "n.", "de": "Wahrheit", "en": "truth", "yo": null, "note": "진실을 말해요 = die Wahrheit sagen. Alltäglicher: 사실 = Tatsache.", "img": "img/topik10s-1f50d.png", "audio": "aa46afe97aad.mp3", "yoAudio": null, "ex": {"ko": "진실을 알아요.", "de": "Ich kenne die Wahrheit.", "en": "I know the truth.", "audio": "aa808c72dc98.mp3"}}, {"word": "밝히다", "pron": "발키다", "pos": "v.", "de": "aufdecken, klarstellen, erhellen", "en": "to reveal, to light up", "yo": "밝혀요", "note": "밝다 = hell → 밝히다 = hell machen, ans Licht bringen. Aussprache [발키다].", "img": "img/topik10s-1f526.png", "audio": "f32cab005a6a.mp3", "yoAudio": "9622cd670605.mp3", "ex": {"ko": "그 사람이 진실을 밝혀요.", "de": "Die Person deckt die Wahrheit auf.", "en": "That person reveals the truth.", "audio": "4b635c53af9b.mp3"}}, {"word": "사실", "pron": "사실", "pos": "n.", "de": "Tatsache; eigentlich", "en": "fact; actually", "yo": null, "note": "사실은 … = eigentlich, ehrlich gesagt: 사실은 저도 몰라요.", "img": "img/topik10s-1f4f0-2705.png", "audio": "6f2ccb858fc4.mp3", "yoAudio": null, "ex": {"ko": "그건 사실이 아니에요.", "de": "Das stimmt nicht.", "en": "That's not true.", "audio": "a391eb4873a5.mp3"}}, {"word": "정답", "pron": "정답", "pos": "n.", "de": "richtige Antwort, Lösung", "en": "correct answer", "yo": null, "note": "정 (richtig) + 답 (Antwort). 정답이에요! = Richtig! In Korea steht ⭕ für richtig.", "img": "img/topik10s-2b55.png", "audio": "8e6be3a867db.mp3", "yoAudio": null, "ex": {"ko": "정답이 뭐예요?", "de": "Was ist die richtige Antwort?", "en": "What is the correct answer?", "audio": "8a445863eaae.mp3"}}, {"word": "고르다", "pron": "고르다", "pos": "v.", "de": "auswählen, aussuchen", "en": "to choose, to select", "yo": "골라요", "note": "르-unregelmäßig: 고르 + 아요 → 골라요 (wie 모르다 → 몰라요).", "img": "img/topik10s-1f5f3.png", "audio": "ad8d6320445a.mp3", "yoAudio": "b470c84520b7.mp3", "ex": {"ko": "정답을 골라요.", "de": "Ich wähle die richtige Antwort.", "en": "I choose the correct answer.", "audio": "229008a09125.mp3"}}, {"word": "직접", "pron": "직쩝", "pos": "adv.", "de": "selbst, persönlich, direkt", "en": "directly, in person", "yo": null, "note": "Steht vor dem Verb: 직접 골라요 = selbst aussuchen. Aussprache [직쩝].", "img": "img/topik10s-1f64b.png", "audio": "e894d10f6ed8.mp3", "yoAudio": null, "ex": {"ko": "제가 직접 만들었어요.", "de": "Ich habe es selbst gemacht.", "en": "I made it myself.", "audio": "fc89d63eb1f9.mp3"}}, {"word": "실패하다", "pron": "실패하다", "pos": "v.", "de": "scheitern, misslingen", "en": "to fail", "yo": "실패해요", "note": "N에 실패하다. 실패 = Misserfolg. Gegenteil: 성공하다.", "img": "img/topik10s-1f4c9.png", "audio": "40caeebac1f6.mp3", "yoAudio": "d0f0bfab6e88.mp3", "ex": {"ko": "어제 다이어트에 실패했어요.", "de": "Gestern ist meine Diät gescheitert.", "en": "Yesterday I failed my diet.", "audio": "9665bd175ef7.mp3"}}, {"word": "성공하다", "pron": "성공하다", "pos": "v.", "de": "Erfolg haben, gelingen", "en": "to succeed", "yo": "성공해요", "note": "N에 성공하다. 성공 = Erfolg.", "img": "img/topik10s-1f3c6.png", "audio": "f99aefe65f3f.mp3", "yoAudio": "5d0196981c3d.mp3", "ex": {"ko": "우리 팀이 성공했어요!", "de": "Unser Team hat es geschafft!", "en": "Our team succeeded!", "audio": "df6177c37dd0.mp3"}}, {"word": "다이어트", "pron": "다이어트", "pos": "n.", "de": "Diät", "en": "diet", "yo": null, "note": "Lehnwort aus dem Englischen (diet). 다이어트를 하다 = eine Diät machen.", "img": "img/topik10s-1f957-1f3c3.png", "audio": "cc3cc2883002.mp3", "yoAudio": null, "ex": {"ko": "저는 다이어트를 해요.", "de": "Ich mache eine Diät.", "en": "I'm on a diet.", "audio": "99b14ca0c1d5.mp3"}}, {"word": "결심", "pron": "결씸", "pos": "n.", "de": "Entschluss, Vorsatz", "en": "decision, resolution", "yo": null, "note": "결심하다 = sich fest vornehmen: 다이어트를 결심했어요. Aussprache [결씸].", "img": "img/topik10s-1f4aa.png", "audio": "926e696bbece.mp3", "yoAudio": null, "ex": {"ko": "저는 결심했어요.", "de": "Ich habe einen Entschluss gefasst.", "en": "I've made up my mind.", "audio": "55034a14e2bb.mp3"}}], "pairs": [["성공하다 🏆", "실패하다 📉"], ["정답 ⭕", "틀린 답 ❌"], ["진실 🔍", "비밀 🤫"]], "grammar": [["-했어요 (Vergangenheit)", "하다 → 했어요: 실패했어요, 성공했어요, 결심했어요."], ["르-unregelmäßig", "고르다 → 골라요, 모르다 → 몰라요: ㄹ wird verdoppelt, ㅡ fällt weg."], ["N에 성공하다 / 실패하다", "다이어트에 성공했어요 = Die Diät hat geklappt. 다이어트에 실패했어요 = Die Diät ist gescheitert."], ["사실은 …", "Am Satzanfang „eigentlich, ehrlich gesagt“: 사실은 저도 다이어트를 했어요."], ["-기로 결심하다", "beschließen zu …: 운동하기로 결심했어요 = Ich habe beschlossen, Sport zu machen."], ["Aussprache", "밝히다 [발키다], 직접 [직쩝], 결심 [결씸], 사실이 [사시리]."]], "dialogueTitle": ["다이어트", "Die Diät"], "dialogue": [{"spk": "A", "ko": "다이어트를 해요?", "de": "Machst du eine Diät?", "en": "Are you on a diet?", "audio": "6468b84bf795.mp3"}, {"spk": "B", "ko": "네, 어제 결심했어요.", "de": "Ja, gestern habe ich mich dazu entschlossen.", "en": "Yes, I decided yesterday.", "audio": "536017189e4a.mp3"}, {"spk": "A", "ko": "사실은 저도 다이어트를 했어요.", "de": "Ehrlich gesagt habe ich auch eine Diät gemacht.", "en": "Actually, I was on a diet too.", "audio": "446669e79d50.mp3"}, {"spk": "B", "ko": "정말요? 성공했어요?", "de": "Wirklich? Hat es geklappt?", "en": "Really? Did you succeed?", "audio": "3c4c68248808.mp3"}, {"spk": "A", "ko": "아니요, 실패했어요. 케이크가 정말 맛있어요!", "de": "Nein, gescheitert. Kuchen ist einfach so lecker!", "en": "No, I failed. Cake is just so tasty!", "audio": "fc7ca34e3932.mp3"}, {"spk": "B", "ko": "하하. 저는 매일 운동해요.", "de": "Haha. Ich mache jeden Tag Sport.", "en": "Haha. I work out every day.", "audio": "d531e2a5bbac.mp3"}, {"spk": "B", "ko": "음식은 직접 만들어요.", "de": "Das Essen koche ich selbst.", "en": "I make my food myself.", "audio": "4183b5a1b870.mp3"}, {"spk": "A", "ko": "와, 화이팅! 꼭 성공해요!", "de": "Wow, viel Erfolg! Du schaffst das bestimmt!", "en": "Wow, fighting! You'll make it!", "audio": "0e036c1d80e6.mp3"}], "storyTitle": ["퀴즈 쇼", "Die Quizshow"], "story": [{"ko": "오늘 저는 퀴즈 쇼에 가요.", "de": "Heute gehe ich zu einer Quizshow.", "audio": "2e3aee49881c.mp3"}, {"ko": "한 사람이 질문을 해요. „정답을 고르세요!“", "de": "Ein Mann stellt Fragen. „Wählen Sie die richtige Antwort!“", "audio": "e816f50191fe.mp3"}, {"ko": "이 문제는 쉬워요. 저는 빨리 정답을 골라요.", "de": "Diese Aufgabe ist leicht. Ich wähle schnell die richtige Antwort.", "audio": "558a1dd6883b.mp3"}, {"ko": "그런데 이 질문은 어려워요.", "de": "Aber diese Frage ist schwer.", "audio": "5f712f35c89f.mp3"}, {"ko": "„이건 사실이에요?“", "de": "„Ist das eine Tatsache?“", "audio": "4a9e3cd247ac.mp3"}, {"ko": "저는 몰라요. 그런데 직접 골라요.", "de": "Ich weiß es nicht. Aber ich entscheide selbst.", "audio": "f94bd15f1e27.mp3"}, {"ko": "„사실이 아니에요!“", "de": "„Das stimmt nicht!“", "audio": "9909078c9dea.mp3"}, {"ko": "그 사람이 진실을 밝혀요.", "de": "Der Mann deckt die Wahrheit auf.", "audio": "4b635c53af9b.mp3"}, {"ko": "„정답이에요!“", "de": "„Richtig!“", "audio": "1903777ba3a7.mp3"}, {"ko": "저는 퀴즈 쇼에서 성공했어요!", "de": "Ich habe es in der Quizshow geschafft!", "audio": "9d1fb872b9d5.mp3"}, {"ko": "친구는 실패했어요.", "de": "Mein Freund ist gescheitert.", "audio": "cb5cf113dbba.mp3"}, {"ko": "우리는 같이 케이크를 먹어요.", "de": "Wir essen zusammen Kuchen.", "audio": "960eaf11f787.mp3"}, {"ko": "다이어트는 내일 결심해요!", "de": "Den Entschluss zur Diät fasse ich morgen!", "audio": "d0f59af24f1c.mp3"}], "dictation": [{"ko": "정답을 골라요.", "audio": "229008a09125.mp3"}, {"ko": "사실이 아니에요.", "audio": "481657265dad.mp3"}, {"ko": "진실을 밝혀요.", "audio": "a5f45d423a36.mp3"}, {"ko": "다이어트에 성공했어요.", "audio": "efb54e02634a.mp3"}, {"ko": "제가 직접 만들었어요.", "audio": "fc89d63eb1f9.mp3"}]};
+const $ = (s, r=document) => r.querySelector(s);
+let cur = null;
+let runId = 0;
+const src = f => "audio/" + window.audioDir + "/" + f;
+function play(file) { runId++; if (cur) cur.pause(); cur = new Audio(src(file)); cur.play(); }
+function stopAudio() { runId++; if (cur) cur.pause(); document.querySelectorAll(".story.now").forEach(e => e.classList.remove("now")); }
+const btn = f => `<button class="play" onclick="play('${f}')">🔊</button>`;
+const shuffle = a => a.map(x => [Math.random(), x]).sort((p, q) => p[0] - q[0]).map(x => x[1]);
+
+const TABS = {
+  "Wörter": () => `<p class="muted">Rate das Wort zum Bild, dann tippe auf den unscharfen Bereich. Tippe 🔊 zum Anhören.
+      <button class="btn" onclick="document.querySelectorAll('.reveal').forEach(e=>e.classList.toggle('open', this.dataset.s!=='1')); this.dataset.s=this.dataset.s==='1'?'':'1'">Alle zeigen/verbergen</button></p><div class="words">` +
+    DATA.words.map(w => `<div class="card word">
+      <img src="${w.img}" alt="">
+      <div class="reveal" onclick="if(!event.target.closest('button'))this.classList.toggle('open')">
+      <div class="k">${w.word} ${btn(w.audio)}</div>
+      <div class="muted">[${w.pron}] · ${w.pos}</div>
+      ${w.yo ? `<div class="yo">${w.yo} ${btn(w.yoAudio)}</div>` : ""}
+      <div class="de">${w.de}<br><span class="muted">${w.en}</span></div>
+      <div class="ex">${btn(w.ex.audio)}<div>${w.ex.ko}<br><span class="muted">${w.ex.de}</span></div></div>
+      <div class="note">${w.note}</div></div></div>`).join("") + `</div>`,
+
+  "Zusammenhang": () => `<div class="card"><h3>Gegensatzpaare</h3>` +
+      DATA.pairs.map(p => `<div class="pair"><div class="big">${p[0]}</div><div class="big">${p[1]}</div></div>`).join("") + `</div>
+    <div class="card"><h3>Grammatik-Notizen</h3><table>` +
+      DATA.grammar.map(g => `<tr><td><b>${g[0]}</b></td><td>${g[1]}</td></tr>`).join("") + `</table></div>`,
+
+  "Dialog": () => `<div class="card"><h3>${DATA.dialogueTitle[0]} <span class="muted">${DATA.dialogueTitle[1]}</span></h3>` +
+    DATA.dialogue.map(d => `<div class="bubble ${d.spk}">${btn(d.audio)}<div class="t"><div class="ko reveal" onclick="this.classList.toggle('open')">${d.ko}</div>
+      <div class="muted hidden-t" onclick="this.classList.toggle('open')">${d.de}<br>${d.en}</div></div></div>`).join("") +
+    `<button class="btn" onclick="playAll()">▶ Alles abspielen</button> <button class="btn" onclick="document.querySelectorAll('.bubble .reveal, .bubble .hidden-t').forEach(e=>e.classList.toggle('open', this.dataset.s!=='1')); this.dataset.s=this.dataset.s==='1'?'':'1'">Alle zeigen/verbergen</button></div>`,
+
+  "Geschichte": () => `<div class="card"><h3>${DATA.storyTitle[0]} <span class="muted">${DATA.storyTitle[1]}</span></h3>
+      <p class="muted">Höre Satz für Satz. Tippe auf den unscharfen Satz, um ihn zu sehen – die Übersetzung darunter separat.</p>
+      <p><button class="btn" onclick="playStory()">▶ Ganze Geschichte</button> <button class="btn" onclick="stopAudio()">⏹ Stop</button>
+      <button class="btn" onclick="document.querySelectorAll('.story .reveal').forEach(e=>e.classList.toggle('open', this.dataset.s!=='1')); this.dataset.s=this.dataset.s==='1'?'':'1'">Alle zeigen/verbergen</button></p>` +
+    DATA.story.map((s, i) => `<div class="story" id="st${i}"><span class="muted">${i + 1}</span>${btn(s.audio)}<div>
+      <div class="reveal ko" onclick="this.classList.toggle('open')">${s.ko}</div>
+      <div class="reveal muted" onclick="this.classList.toggle('open')">${s.de}</div></div></div>`).join("") + `</div>`,
+
+  "Diktat": () => `<div id="dict"></div>`,
+};
+
+function dictation() {
+  const el = $("#dict"); let i = 0;
+  const show = () => {
+    if (i >= DATA.dictation.length) { el.innerHTML = `<div class="card"><div class="big">🎉</div><button class="btn" onclick="dictation()">Nochmal</button></div>`; i = 0; return; }
+    const d = DATA.dictation[i];
+    el.innerHTML = `<div class="card"><div class="muted">${i + 1} / ${DATA.dictation.length} · Höre und schreibe</div>
+      <div class="big">${btn(d.audio)}</div><input type="text" id="inp" autocomplete="off" placeholder="한국어…">
+      <p id="res" class="muted"></p><div id="act"><button class="btn" id="chk">Prüfen</button></div></div>`;
+    play(d.audio);
+    const norm = s => s.replace(/[\s.?!]/g, "");
+    const check = () => {
+      const ok = norm($("#inp").value) === norm(d.ko);
+      if (ok) { $("#res").innerHTML = "✅ Richtig!"; setTimeout(() => { i++; show(); }, 800); return; }
+      $("#res").innerHTML = `❌ Nicht ganz. Richtig: <b>${d.ko}</b>`;
+      $("#act").innerHTML = `<button class="btn" id="retry">↻ Nochmal versuchen</button> <button class="btn" id="next">Weiter →</button>`;
+      $("#retry").onclick = () => { $("#res").innerHTML = ""; $("#act").innerHTML = `<button class="btn" id="chk">Prüfen</button>`; $("#chk").onclick = check; $("#inp").value = ""; $("#inp").focus(); play(d.audio); };
+      $("#next").onclick = () => { i++; show(); };
+    };
+    $("#chk").onclick = check;
+    $("#inp").onkeydown = e => { if (e.key === "Enter" && $("#chk")) check(); };
+  };
+  show();
+}
+
+function playStory() {
+  stopAudio(); const id = runId; let i = 0;
+  const next = () => {
+    document.querySelectorAll(".story.now").forEach(e => e.classList.remove("now"));
+    if (id !== runId || i >= DATA.story.length) return;
+    const el = document.getElementById("st" + i); el.classList.add("now"); el.scrollIntoView({ block: "center", behavior: "smooth" });
+    cur = new Audio(src(DATA.story[i++].audio));
+    cur.onended = () => setTimeout(() => { if (id === runId) next(); }, 2500);
+    cur.play();
+  };
+  next();
+}
+
+function playAll() {
+  let i = 0;
+  const next = () => { if (i >= DATA.dialogue.length) return; cur = new Audio(src(DATA.dialogue[i++].audio)); cur.onended = () => setTimeout(next, 1800); cur.play(); };
+  next();
+}
+
+function tab(name) {
+  document.querySelectorAll("#nav button").forEach(b => {
+    b.classList.toggle("active", b.textContent === name);
+    if (b.textContent === name) b.scrollIntoView({ block: "nearest", inline: "nearest" });
+  });
+  $("#main").innerHTML = TABS[name]();
+  if (name === "Diktat") dictation();
+}
+$("#nav").innerHTML = Object.keys(TABS).map(n => `<button onclick="tab('${n}')">${n}</button>`).join("");
+tab("Wörter");
+</script>
+</body>
+</html>
