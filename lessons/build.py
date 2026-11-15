@@ -141,8 +141,8 @@ OVERVIEW = """<!doctype html>
 <style>
   html, body { margin:0; height:100%; }
   body { display:flex; flex-direction:column; font-family:-apple-system, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; background:#f6f8f4; color:#222; }
-  #lessons { display:flex; gap:6px; flex-wrap:wrap; padding:8px 16px; background:#2e8b57; }
-  #lessons button { border:none; border-radius:8px; padding:6px 12px; cursor:pointer; background:#ffffff33; color:#fff; text-align:left; font-size:15px; font-weight:600; }
+  #lessons { display:flex; gap:6px; flex-wrap:nowrap; overflow-x:auto; -webkit-overflow-scrolling:touch; padding:8px 16px; background:#2e8b57; flex:none; }
+  #lessons button { flex:none; white-space:nowrap; border:none; border-radius:8px; padding:6px 12px; cursor:pointer; background:#ffffff33; color:#fff; text-align:left; font-size:15px; font-weight:600; }
   #lessons button small { display:block; font-size:11px; font-weight:400; opacity:.9; }
   #lessons button.active { background:#fff; color:#2e8b57; }
   iframe { flex:1; width:100%; border:0; }
@@ -158,6 +158,7 @@ const nav = document.getElementById("lessons"), frame = document.getElementById(
 function show(i) {
   frame.src = LESSONS[i].dir + "/index.html";
   [...nav.children].forEach((b, j) => b.classList.toggle("active", j === i));
+  nav.children[i].scrollIntoView({ block: "nearest", inline: "nearest" });
   location.hash = i + 1;
 }
 LESSONS.forEach((l, i) => {
