@@ -33,6 +33,7 @@
   .word .ex { margin-top:8px; padding-top:8px; border-top:1px dashed #e0e0e0; font-size:18px; text-align:left; display:flex; gap:8px; align-items:flex-start; }
   .word .note { font-size:12px; color:var(--muted); margin-top:6px; text-align:left; }
   .reveal { cursor:pointer; filter:blur(8px); user-select:none; } .reveal.open { filter:none; }
+  .word .ex span.reveal { display:inline-block; }
   .story { display:flex; gap:10px; align-items:flex-start; padding:10px 8px; border-bottom:1px dashed #e0e0e0; border-radius:8px; }
   .story > .muted { width:20px; padding-top:8px; text-align:right; }
   .story .ko { font-size:22px; } .story.now { background:#eef8f0; }
@@ -86,16 +87,15 @@ const shuffle = a => a.map(x => [Math.random(), x]).sort((p, q) => p[0] - q[0]).
 const TABS = {
   "Wörter": () => `<p class="muted">Rate das Wort zum Bild, dann tippe auf den unscharfen Bereich. Tippe 🔊 zum Anhören.
       <button class="btn" onclick="document.querySelectorAll('.reveal').forEach(e=>e.classList.toggle('open', this.dataset.s!=='1')); this.dataset.s=this.dataset.s==='1'?'':'1'">Alle zeigen/verbergen</button></p><div class="words">` +
-    DATA.words.map(w => `<div class="card word">
+    DATA.words.map(w => `<div class="card word" onclick="if(!event.target.closest('button'))this.querySelectorAll('.reveal').forEach(e=>e.classList.toggle('open'))">
       <img src="${w.img}" alt="">
       <div class="de">${w.de}</div>
-      <div class="reveal" onclick="if(!event.target.closest('button'))this.classList.toggle('open')">
+      <div class="reveal">
       <div class="k">${w.word} ${btn(w.audio)}</div>
       <div class="muted">[${w.pron}] · ${w.pos}</div>
-      ${w.yo ? `<div class="yo">${w.yo} ${btn(w.yoAudio)}</div>` : ""}
-      <div class="ex">${btn(w.ex.audio)}<div>${w.ex.ko}</div></div>
-      <div class="note">${w.note}</div></div>
-      <div class="muted" style="text-align:left;margin-top:4px">${w.ex.de}</div></div>`).join("") + `</div>`,
+      ${w.yo ? `<div class="yo">${w.yo} ${btn(w.yoAudio)}</div>` : ""}</div>
+      <div class="ex">${btn(w.ex.audio)}<div><span class="reveal">${w.ex.ko}</span><br><span class="muted">${w.ex.de}</span></div></div>
+      <div class="note reveal">${w.note}</div></div>`).join("") + `</div>`,
 
   "Zusammenhang": () => `<div class="card"><h3>Gegensatzpaare</h3>` +
       DATA.pairs.map(p => `<div class="pair"><div class="big">${p[0]}</div><div class="big">${p[1]}</div></div>`).join("") + `</div>
