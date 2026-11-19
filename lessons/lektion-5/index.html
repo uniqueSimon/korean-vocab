@@ -31,6 +31,7 @@
   .word .yo { color:var(--accent); }
   .word .de { font-size:17px; }
   .word .ex { margin-top:8px; padding-top:8px; border-top:1px dashed #e0e0e0; font-size:18px; text-align:left; display:flex; gap:8px; align-items:flex-start; }
+  .word .grp { cursor:pointer; }
   .word .note { font-size:12px; color:var(--muted); margin-top:6px; text-align:left; }
   .reveal { cursor:pointer; filter:blur(8px); user-select:none; } .reveal.open { filter:none; }
   .word span.reveal { display:inline-block; }
@@ -82,19 +83,21 @@ const src = f => "audio/" + window.audioDir + "/" + f;
 function play(file) { runId++; if (cur) cur.pause(); cur = new Audio(src(file)); cur.play(); }
 function stopAudio() { runId++; if (cur) cur.pause(); document.querySelectorAll(".story.now").forEach(e => e.classList.remove("now")); }
 const btn = f => `<button class="play" onclick="play('${f}')">🔊</button>`;
+const tg = (e, g) => { if (!e.target.closest('button')) g.querySelectorAll('.reveal').forEach(x => x.classList.toggle('open')); };
 const shuffle = a => a.map(x => [Math.random(), x]).sort((p, q) => p[0] - q[0]).map(x => x[1]);
 
 const TABS = {
   "Wörter": () => `<p class="muted">Rate das Wort zum Bild, dann tippe auf den unscharfen Bereich. Tippe 🔊 zum Anhören.
       <button class="btn" onclick="document.querySelectorAll('.reveal').forEach(e=>e.classList.toggle('open', this.dataset.s!=='1')); this.dataset.s=this.dataset.s==='1'?'':'1'">Alle zeigen/verbergen</button></p><div class="words">` +
-    DATA.words.map(w => `<div class="card word" onclick="if(!event.target.closest('button'))this.querySelectorAll('.reveal').forEach(e=>e.classList.toggle('open'))">
+    DATA.words.map(w => `<div class="card word">
       <img src="${w.img}" alt="">
       <div class="de">${w.de}</div>
+      <div class="grp" onclick="tg(event,this)">
       <div class="k"><span class="reveal">${w.word}</span> ${btn(w.audio)}</div>
       <div class="muted reveal">[${w.pron}] · ${w.pos}</div>
-      ${w.yo ? `<div class="yo"><span class="reveal">${w.yo}</span> ${btn(w.yoAudio)}</div>` : ""}
-      <div class="ex">${btn(w.ex.audio)}<div><span class="reveal">${w.ex.ko}</span><br><span class="muted">${w.ex.de}</span></div></div>
-      <div class="note reveal">${w.note}</div></div>`).join("") + `</div>`,
+      ${w.yo ? `<div class="yo"><span class="reveal">${w.yo}</span> ${btn(w.yoAudio)}</div>` : ""}</div>
+      <div class="ex grp" onclick="tg(event,this)">${btn(w.ex.audio)}<div><span class="reveal">${w.ex.ko}</span><br><span class="muted">${w.ex.de}</span></div></div>
+      <div class="note grp" onclick="tg(event,this)"><span class="reveal">${w.note}</span></div></div>`).join("") + `</div>`,
 
   "Zusammenhang": () => `<div class="card"><h3>Gegensatzpaare</h3>` +
       DATA.pairs.map(p => `<div class="pair"><div class="big">${p[0]}</div><div class="big">${p[1]}</div></div>`).join("") + `</div>
