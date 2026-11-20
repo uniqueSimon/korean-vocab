@@ -90,7 +90,7 @@ const TABS = {
   "Wörter": () => `<p class="muted">Rate das Wort zum Bild, dann tippe auf den unscharfen Bereich. Tippe 🔊 zum Anhören.
       <button class="btn" onclick="document.querySelectorAll('.reveal').forEach(e=>e.classList.toggle('open', this.dataset.s!=='1')); this.dataset.s=this.dataset.s==='1'?'':'1'">Alle zeigen/verbergen</button></p><div class="words">` +
     DATA.words.map(w => `<div class="card word">
-      <img src="${w.img}" alt="" style="cursor:pointer" onclick="this.closest('.word').querySelectorAll('.reveal').forEach(x=>x.classList.toggle('open', !this.closest('.word').querySelector('.reveal.open')))">
+      <img src="${w.img}" alt="" style="cursor:pointer" onclick="var c=this.closest('.word'),o=!c.querySelector('.reveal.open');c.querySelectorAll('.reveal').forEach(x=>x.classList.toggle('open',o))">
       <div class="de">${w.de}</div>
       <div class="grp" onclick="tg(event,this)">
       <div class="k"><span class="reveal">${w.word}</span> ${btn(w.audio)}</div>
