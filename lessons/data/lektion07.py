@@ -67,11 +67,3 @@ STORY = [
     ('우리는 같이 케이크를 먹어요.', 'Wir essen zusammen Kuchen.'),
     ('다이어트는 내일 결심해요!', 'Den Entschluss zur Diät fasse ich morgen!'),
 ]
-
-DICTATION = [
-    '정답을 골라요.',
-    '사실이 아니에요.',
-    '진실을 밝혀요.',
-    '다이어트에 성공했어요.',
-    '제가 직접 만들었어요.',
-]

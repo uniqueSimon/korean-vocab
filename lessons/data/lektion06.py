@@ -69,11 +69,3 @@ STORY = [
     ('우리는 매일 같이 공부해요. 그건 우리 약속이에요.', 'Wir lernen jeden Tag zusammen. Das ist unser Versprechen.'),
     ('우리는 약속을 지켜요.', 'Wir halten unser Versprechen.'),
 ]
-
-DICTATION = [
-    '약속을 지켜요.',
-    '이 문제는 어려워요.',
-    '이건 비밀이에요.',
-    '선생님이 한국어를 가르쳐요.',
-    '우리는 서로 믿어요.',
-]

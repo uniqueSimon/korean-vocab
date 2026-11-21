@@ -62,11 +62,3 @@ STORY = [
     ('오늘은 수업이 일찍 끝나요.', 'Heute endet der Unterricht früh.'),
     ('저는 친구랑 카페에 가요.', 'Ich gehe mit einem Freund ins Café.'),
 ]
-
-DICTATION = [
-    '의자에 앉아요.',
-    '수업이 끝나요.',
-    '일찍 일어나요.',
-    '한 시간이 걸려요.',
-    '그림을 봐요.',
-]

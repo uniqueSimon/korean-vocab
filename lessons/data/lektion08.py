@@ -69,11 +69,3 @@ STORY = [
     ('오늘은 정말 좋은 기억이에요.', 'Heute ist eine richtig schöne Erinnerung.'),
     ('새로운 생활이 정말 좋아요!', 'Das neue Leben gefällt mir wirklich!'),
 ]
-
-DICTATION = [
-    '지갑을 잃어버렸어요.',
-    '쓰레기를 주워요.',
-    '휴지를 버려요.',
-    '여섯 시에 퇴근해요.',
-    '새로운 직장에 다녀요.',
-]

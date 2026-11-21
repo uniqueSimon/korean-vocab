@@ -65,11 +65,3 @@ STORY = [
     ('그런데 저 답은 틀려요.', 'Aber jene Antwort ist falsch.'),
     ('수업이 일찍 끝나요.', 'Der Unterricht endet früh.'),
 ]
-
-DICTATION = [
-    '질문에 대답해요.',
-    '답이 틀려요.',
-    '이름을 적어요.',
-    '이름을 물어요.',
-    '외국어를 공부해요.',
-]

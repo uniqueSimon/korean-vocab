@@ -15,7 +15,7 @@ lessons/
 
 1. Copy the latest data file, e.g. `data/lektion04.py` → `data/lektion05.py` (the number = lesson number).
 2. Edit it: `TITLE`, `UNIT` (TOPIK PDF number), a new `ANKI_FILE` and `IMG_PREFIX`, then `WORDS`, `PAIRS`,
-   `GRAMMAR`, `DIALOGUE`, `STORY`, `DICTATION`. Picture codes are OpenMoji/emoji codepoints (e.g. `"1F3AC"`).
+   `GRAMMAR`, `DIALOGUE`, `STORY`. Picture codes are OpenMoji/emoji codepoints (e.g. `"1F3AC"`).
 3. Build (from the project root):
 
    ```

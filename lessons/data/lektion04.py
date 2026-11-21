@@ -67,11 +67,3 @@ STORY = [
     ('친구는 카페에서 열심히 글을 써요.', 'Mein Freund schreibt im Café fleißig einen Text.'),
     ('저는 그 글의 제목을 지어요.', 'Ich denke mir den Titel für den Text aus.'),
 ]
-
-DICTATION = [
-    '영화를 봐요.',
-    '모양이 달라요.',
-    '모양이 같아요.',
-    '제목을 지어요.',
-    '열심히 공부해요.',
-]

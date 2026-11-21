@@ -64,11 +64,3 @@ STORY = [
     ('우리는 산 위에서 라면을 먹어요.', 'Wir essen oben auf dem Berg Ramen.'),
     ('저녁에 아래로 내려가요.', 'Am Abend gehen wir hinunter.'),
 ]
-
-DICTATION = [
-    '산이 높아요.',
-    '온도를 재요.',
-    '위로 올라가요.',
-    '아래로 내려가요.',
-    '길이를 재요.',
-]

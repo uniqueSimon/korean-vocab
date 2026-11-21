@@ -66,11 +66,3 @@ STORY = [
     ('동생은 나이가 어려요. 그런데 정말 귀여워요.', 'Mein Geschwisterchen ist noch so klein. Aber wirklich süß.'),
     ('오늘은 정말 특별한 생일이에요.', 'Heute ist ein ganz besonderer Geburtstag.'),
 ]
-
-DICTATION = [
-    '동생이 있어요.',
-    '아이가 태어나요.',
-    '나이가 어려요.',
-    '어른에게 인사해요.',
-    '오빠는 스물다섯 살이에요.',
-]

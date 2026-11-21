@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Builds every lesson in lessons/data/ into lessons/lektion-N/ plus the overview page ../index.html.
 
-Each lesson = one data file lessons/data/lektionNN.py (words, dialog, story, dictation, grammar notes).
+Each lesson = one data file lessons/data/lektionNN.py (words, dialog, story, grammar notes).
 Output per lesson: index.html, audio/<speed>/*.mp3, img/*.png, anki/<ANKI_FILE> (cards with pictures, no audio).
 
 Usage:  practice/.venv/bin/python lessons/build.py [N ...] [--no-audio]
@@ -150,9 +150,8 @@ def build(n, lesson, vocab, with_audio, push=False):
     dialogue = [{"spk": spk, "ko": ko, "de": de, "en": en, "audio": clip(ko, VOICE_B if spk == "B" else VOICE_A)}
                 for spk, ko, de, en in lesson.DIALOGUE]
     story = [{"ko": ko, "de": de, "audio": clip(ko)} for ko, de in lesson.STORY]
-    # every word is dictated via its example sentence; the lesson's extra sentences follow (deduplicated)
-    dict_sentences = list(dict.fromkeys([w["ex"]["ko"] for w in words] + list(lesson.DICTATION)))
-    dictation = [{"ko": ko, "audio": clip(ko)} for ko in dict_sentences]
+    # every word is dictated via its example sentence
+    dictation = [{"ko": w["ex"]["ko"], "audio": w["ex"]["audio"]} for w in words]
 
     if with_audio:
         for d in RATES:
