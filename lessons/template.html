@@ -158,7 +158,7 @@ const TABS = {
 };
 
 function dictation() {
-  const el = $("#dict"), items = shuffle(items); let i = 0;
+  const el = $("#dict"), items = shuffle(DATA.dictation); let i = 0;
   const show = () => {
     if (i >= items.length) { el.innerHTML = `<div class="card"><div class="big">🎉</div><button class="btn" onclick="dictation()">Nochmal</button></div>`; i = 0; return; }
     const d = items[i];
