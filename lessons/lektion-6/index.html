@@ -158,11 +158,11 @@ const TABS = {
 };
 
 function dictation() {
-  const el = $("#dict"); let i = 0;
+  const el = $("#dict"), items = shuffle(items); let i = 0;
   const show = () => {
-    if (i >= DATA.dictation.length) { el.innerHTML = `<div class="card"><div class="big">🎉</div><button class="btn" onclick="dictation()">Nochmal</button></div>`; i = 0; return; }
-    const d = DATA.dictation[i];
-    el.innerHTML = `<div class="card"><div class="muted">${i + 1} / ${DATA.dictation.length} · Höre und schreibe</div>
+    if (i >= items.length) { el.innerHTML = `<div class="card"><div class="big">🎉</div><button class="btn" onclick="dictation()">Nochmal</button></div>`; i = 0; return; }
+    const d = items[i];
+    el.innerHTML = `<div class="card"><div class="muted">${i + 1} / ${items.length} · Höre und schreibe</div>
       <div class="big">${btn(d.audio)}</div><input type="text" id="inp" autocomplete="off" placeholder="한국어…">
       <p id="res" class="muted"></p><div id="act"><button class="btn" id="chk">Prüfen</button></div></div>`;
     play(d.audio);
