@@ -97,10 +97,16 @@ async function ankiPush(b) {
     await call("createDeck", {deck:DATA.anki.deck});
     for (const [i, w] of DATA.words.entries()) {
       msg.textContent = `${i+1}/${DATA.words.length} …`;
-      const blob = await (await fetch(w.img)).blob();
-      const data = await new Promise(res => { const f = new FileReader(); f.onload = () => res(f.result.split(",")[1]); f.readAsDataURL(blob); });
       const file = w.img.split("/").pop();
-      await call("storeMediaFile", {filename:file, data});
+      if (location.protocol === "file:") {
+        // browsers block fetch() on file://, so let Anki read the picture from disk
+        let dir = decodeURIComponent(location.pathname).replace(/[^/]*$/, "").replace(/^\/(?=[A-Za-z]:)/, "");
+        await call("storeMediaFile", {filename:file, path:dir + w.img});
+      } else {
+        const blob = await (await fetch(w.img)).blob();
+        const data = await new Promise(res => { const f = new FileReader(); f.onload = () => res(f.result.split(",")[1]); f.readAsDataURL(blob); });
+        await call("storeMediaFile", {filename:file, data});
+      }
       const yo = w.yo ? ` → ${w.yo}` : "";
       const fields = {
         "Vorderseite": `<img src='${file}'><br><b>${w.de}</b><br><br><span style='color:#888'>${w.ex.de}</span>`,
