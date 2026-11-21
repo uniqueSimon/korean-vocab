@@ -150,7 +150,9 @@ def build(n, lesson, vocab, with_audio, push=False):
     dialogue = [{"spk": spk, "ko": ko, "de": de, "en": en, "audio": clip(ko, VOICE_B if spk == "B" else VOICE_A)}
                 for spk, ko, de, en in lesson.DIALOGUE]
     story = [{"ko": ko, "de": de, "audio": clip(ko)} for ko, de in lesson.STORY]
-    dictation = [{"ko": ko, "audio": clip(ko)} for ko in lesson.DICTATION]
+    # every word is dictated via its example sentence; the lesson's extra sentences follow (deduplicated)
+    dict_sentences = list(dict.fromkeys([w["ex"]["ko"] for w in words] + list(lesson.DICTATION)))
+    dictation = [{"ko": ko, "audio": clip(ko)} for ko in dict_sentences]
 
     if with_audio:
         for d in RATES:
