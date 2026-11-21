@@ -60,6 +60,51 @@ def picture(codes, prefix, img_dir):
     return out
 
 
+def card_fields(w):
+    front = (f"<img src='{os.path.basename(w['img'])}'><br><b>{w['de']}</b><br><br>"
+             f"<span style='color:#888'>{w['ex']['de']}</span>")
+    yo = f" → {w['yo']}" if w["yo"] else ""
+    back = (f"<span style='font-size:135%'><b>{w['word']}</b>{yo}</span> [{w['pron']}]"
+            f"<br><br>{w['ex']['ko']}<br><span style='color:#888'>{w['ex']['de']}</span>"
+            f"<br><br><span style='color:#888;font-size:85%'>{w['note']}</span>")
+    return front, back
+
+
+def anki_push(words, lesson):
+    """Add/update notes in the running Anki desktop via the AnkiConnect add-on (code 2055492159)."""
+    import base64, json, urllib.request
+
+    def call(action, **params):
+        req = urllib.request.Request("http://127.0.0.1:8765", json.dumps(
+            {"action": action, "version": 6, "params": params}).encode())
+        res = json.load(urllib.request.urlopen(req, timeout=30))
+        if res["error"]:
+            raise RuntimeError(f"AnkiConnect {action}: {res['error']}")
+        return res["result"]
+
+    try:
+        call("version")
+    except OSError:
+        sys.exit("Anki is not reachable: start Anki desktop with the AnkiConnect add-on installed.")
+    call("createDeck", deck=ANKI_DECK)
+    added = updated = 0
+    for w in words:
+        front, back = card_fields(w)
+        with open(w["img"], "rb") as f:
+            call("storeMediaFile", filename=os.path.basename(w["img"]), data=base64.b64encode(f.read()).decode())
+        # cards imported earlier from the .apkg have no stored key, so match them by the bold Korean word on the back
+        ids = call("findNotes", query=f'"Rückseite:*<b>{w["word"]}</b>*"')
+        if ids:
+            call("updateNoteFields", note={"id": ids[0], "fields": {"Vorderseite": front, "Rückseite": back}})
+            updated += 1
+        else:
+            call("addNote", note={"deckName": ANKI_DECK, "modelName": "Einfach",
+                                  "fields": {"Vorderseite": front, "Rückseite": back},
+                                  "tags": ["koreanisch", f"topik{lesson.UNIT:02d}"]})
+            added += 1
+    print(f"  Anki push: {added} added, {updated} updated")
+
+
 def anki(words, lesson, out_dir):
     import genanki
     css = (".card{font-family:arial;font-size:20px;line-height:1.5;text-align:center;color:black;background:white}"
@@ -71,12 +116,7 @@ def anki(words, lesson, out_dir):
                     "afmt": "{{FrontSide}}\n\n<hr id=answer>\n\n{{Rückseite}}"}], css=css)
     deck = genanki.Deck(ANKI_DECK_ID, ANKI_DECK)
     for w in words:
-        front = (f"<img src='{os.path.basename(w['img'])}'><br><b>{w['de']}</b><br><br>"
-                 f"<span style='color:#888'>{w['ex']['de']}</span>")
-        yo = f" → {w['yo']}" if w["yo"] else ""
-        back = (f"<span style='font-size:135%'><b>{w['word']}</b>{yo}</span> [{w['pron']}]"
-                f"<br><br>{w['ex']['ko']}<br><span style='color:#888'>{w['ex']['de']}</span>"
-                f"<br><br><span style='color:#888;font-size:85%'>{w['note']}</span>")
+        front, back = card_fields(w)
         # fixed GUID per word → re-importing updates the existing card instead of duplicating it
         deck.add_note(genanki.Note(model=model, fields=[front, back],
                                    tags=["koreanisch", f"topik{lesson.UNIT:02d}"],
@@ -89,7 +129,7 @@ def anki(words, lesson, out_dir):
     return out
 
 
-def build(n, lesson, vocab, with_audio):
+def build(n, lesson, vocab, with_audio, push=False):
     out_dir = os.path.join(HERE, f"lektion-{n}")
     audio_dir, img_dir = os.path.join(out_dir, "audio"), os.path.join(out_dir, "img")
     jobs = []
@@ -118,6 +158,7 @@ def build(n, lesson, vocab, with_audio):
         asyncio.run(base.synthesize(jobs))
 
     data = {"words": [{**w, "img": "img/" + os.path.basename(w["img"])} for w in words],
+            "anki": {"deck": ANKI_DECK, "tag": f"topik{lesson.UNIT:02d}"},
             "pairs": lesson.PAIRS, "grammar": lesson.GRAMMAR,
             "dialogueTitle": lesson.DIALOGUE_TITLE, "dialogue": dialogue,
             "storyTitle": lesson.STORY_TITLE, "story": story, "dictation": dictation}
@@ -130,6 +171,8 @@ def build(n, lesson, vocab, with_audio):
     with open(os.path.join(out_dir, "index.html"), "w", encoding="utf-8") as f:
         f.write(page)
     print(f"Lektion {n}: lessons/lektion-{n}/index.html, {os.path.relpath(anki(words, lesson, out_dir), ROOT)}")
+    if push:
+        anki_push(words, lesson)
 
 
 OVERVIEW = """<!doctype html>
@@ -206,7 +249,7 @@ def main():
     wanted = {int(a) for a in args if a.isdigit()}
     for n, lesson in lessons:
         if not wanted or n in wanted:
-            build(n, lesson, vocab, "--no-audio" not in args)
+            build(n, lesson, vocab, "--no-audio" not in args, "--anki-push" in args)
     overview(lessons, numbers)
 
 

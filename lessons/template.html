@@ -86,9 +86,40 @@ const btn = f => `<button class="play" onclick="play('${f}')">🔊</button>`;
 const tg = (e, g) => { if (!e.target.closest('button')) g.querySelectorAll('.reveal').forEach(x => x.classList.toggle('open')); };
 const shuffle = a => a.map(x => [Math.random(), x]).sort((p, q) => p[0] - q[0]).map(x => x[1]);
 
+async function ankiPush(b) {
+  const msg = $("#ankiMsg"), call = async (action, params) => {
+    const r = await (await fetch("http://127.0.0.1:8765", {method:"POST", body:JSON.stringify({action, version:6, params})})).json();
+    if (r.error) throw new Error(r.error);
+    return r.result;
+  };
+  b.disabled = true; let added = 0, updated = 0;
+  try {
+    await call("createDeck", {deck:DATA.anki.deck});
+    for (const [i, w] of DATA.words.entries()) {
+      msg.textContent = `${i+1}/${DATA.words.length} …`;
+      const blob = await (await fetch(w.img)).blob();
+      const data = await new Promise(res => { const f = new FileReader(); f.onload = () => res(f.result.split(",")[1]); f.readAsDataURL(blob); });
+      const file = w.img.split("/").pop();
+      await call("storeMediaFile", {filename:file, data});
+      const yo = w.yo ? ` → ${w.yo}` : "";
+      const fields = {
+        "Vorderseite": `<img src='${file}'><br><b>${w.de}</b><br><br><span style='color:#888'>${w.ex.de}</span>`,
+        "Rückseite": `<span style='font-size:135%'><b>${w.word}</b>${yo}</span> [${w.pron}]<br><br>${w.ex.ko}<br><span style='color:#888'>${w.ex.de}</span><br><br><span style='color:#888;font-size:85%'>${w.note}</span>`};
+      const ids = await call("findNotes", {query:`"Rückseite:*<b>${w.word}</b>*"`});
+      if (ids.length) { await call("updateNoteFields", {note:{id:ids[0], fields}}); updated++; }
+      else { await call("addNote", {note:{deckName:DATA.anki.deck, modelName:"Einfach", fields, tags:["koreanisch", DATA.anki.tag]}}); added++; }
+    }
+    msg.textContent = `✓ ${added} neu, ${updated} aktualisiert – jetzt in Anki synchronisieren`;
+  } catch (e) {
+    msg.textContent = "Fehler: " + e.message + " (läuft Anki mit AnkiConnect? Ist diese Seite in webCorsOriginList erlaubt?)";
+  }
+  b.disabled = false;
+}
+
 const TABS = {
   "Wörter": () => `<p class="muted">Rate das Wort zum Bild, dann tippe auf den unscharfen Bereich. Tippe 🔊 zum Anhören.
-      <button class="btn" onclick="document.querySelectorAll('.reveal').forEach(e=>e.classList.toggle('open', this.dataset.s!=='1')); this.dataset.s=this.dataset.s==='1'?'':'1'">Alle zeigen/verbergen</button></p><div class="words">` +
+      <button class="btn" onclick="document.querySelectorAll('.reveal').forEach(e=>e.classList.toggle('open', this.dataset.s!=='1')); this.dataset.s=this.dataset.s==='1'?'':'1'">Alle zeigen/verbergen</button>
+      <button class="btn" id="ankiBtn" onclick="ankiPush(this)">📥 In Anki übernehmen</button> <span class="muted" id="ankiMsg"></span></p><div class="words">` +
     DATA.words.map(w => `<div class="card word">
       <img src="${w.img}" alt="" style="cursor:pointer" onclick="var c=this.closest('.word'),o=!c.querySelector('.reveal.open');c.querySelectorAll('.reveal').forEach(x=>x.classList.toggle('open',o))">
       <div class="de">${w.de}</div>

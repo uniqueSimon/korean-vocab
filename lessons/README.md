@@ -24,6 +24,10 @@ lessons/
    ```
 
    Add `--no-audio` to skip TTS while iterating on text. Existing audio and pictures are reused.
+   Add `--anki-push` to add/update the cards directly in the running Anki desktop (needs the AnkiConnect add-on, code `2055492159`;
+   existing cards are matched by their Korean word and updated). Then sync Anki to AnkiWeb for the iPhone.
+   In the page itself, the Wörter tab has a **📥 In Anki übernehmen** button doing the same (desktop only). Add the page origin to
+   AnkiConnect's config (Tools → Add-ons → AnkiConnect → Config) `webCorsOriginList`, e.g. `"https://uniquesimon.github.io"` (`"null"` for a local file).
 4. Open `index.html`, import `lessons/lektion-5/anki/<ANKI_FILE>` into Anki.
 
 The build checks that every word is in the given TOPIK PDF and isn't already used in another lesson.
