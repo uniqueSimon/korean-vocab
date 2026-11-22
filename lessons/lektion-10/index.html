@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Korean · Lektion 10</title>
+<style>
+  :root { --bg:#f6f8f4; --card:#fff; --ink:#222; --muted:#777; --accent:#2e8b57; --ok:#1e9e5a; --bad:#d64545; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; background:var(--bg); color:var(--ink); }
+  header { position:sticky; top:0; z-index:5; background:var(--card); border-bottom:1px solid #dde5d8; padding:10px 16px; }
+  header h1 { font-size:18px; margin:0 0 8px; }
+  nav { display:flex; gap:6px; flex-wrap:nowrap; overflow-x:auto; padding-bottom:4px; -webkit-overflow-scrolling:touch; }
+  nav button { flex:none; white-space:nowrap; border:1px solid #ccc; background:#fff; border-radius:18px; padding:6px 12px; cursor:pointer; font-size:14px; }
+  nav button.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+  header { display:flex; flex-wrap:wrap; align-items:flex-start; gap:4px 12px; }
+  header h1 { flex:1 1 100%; }
+  header nav { flex:1 1 auto; min-width:0; }
+  .zoom { display:flex; align-items:center; gap:6px; font-size:13px; color:var(--muted); }
+  .spd { display:flex; align-items:center; gap:4px; margin-left:8px; white-space:nowrap; } .spd input { width:90px; } #sv { min-width:70px; }
+  .zoom button { border:1px solid #ccc; background:#fff; border-radius:8px; padding:5px 10px; cursor:pointer; font-size:14px; }
+  main { max-width:820px; margin:0 auto; padding:16px; }
+  .card { background:var(--card); border-radius:12px; padding:16px; margin-bottom:14px; box-shadow:0 1px 3px rgba(0,0,0,.06); }
+  .muted { color:var(--muted); font-size:13px; }
+  .btn { border:none; background:var(--accent); color:#fff; padding:8px 14px; border-radius:8px; cursor:pointer; font-size:15px; }
+  .play { border:none; background:#e3f1e7; border-radius:50%; width:34px; height:34px; cursor:pointer; flex:none; }
+  .words { display:grid; grid-template-columns:repeat(auto-fill, minmax(240px,1fr)); gap:12px; }
+  .word { text-align:center; }
+  .word img { width:100%; max-height:150px; object-fit:contain; border-radius:8px; background:#f3f7ef; }
+  .word .k { font-size:30px; font-weight:600; margin-top:6px; }
+  .word .yo { color:var(--accent); }
+  .word .de { font-size:17px; }
+  .word .ex { margin-top:8px; padding-top:8px; border-top:1px dashed #e0e0e0; font-size:18px; text-align:left; display:flex; gap:8px; align-items:flex-start; }
+  .word .grp { cursor:pointer; }
+  .word .note { font-size:12px; color:var(--muted); margin-top:6px; text-align:left; }
+  .reveal { cursor:pointer; filter:blur(8px); user-select:none; } .reveal.open { filter:none; }
+  .word span.reveal { display:inline-block; }
+  .story { display:flex; gap:10px; align-items:flex-start; padding:10px 8px; border-bottom:1px dashed #e0e0e0; border-radius:8px; }
+  .story > .muted { width:20px; padding-top:8px; text-align:right; }
+  .story .ko { font-size:22px; } .story.now { background:#eef8f0; }
+  .hidden-t { filter:blur(6px); cursor:pointer; } .hidden-t.open { filter:none; }
+  .bubble { display:flex; gap:8px; align-items:flex-start; margin:10px 0; }
+  .bubble.B { flex-direction:row-reverse; text-align:right; }
+  .bubble .t { background:#eef8f0; border-radius:12px; padding:8px 12px; max-width:80%; }
+  .bubble.B .t { background:#eef2fb; }
+  .bubble .ko { font-size:21px; }
+  input[type=text] { font-size:20px; padding:8px; width:100%; border:1px solid #ccc; border-radius:8px; }
+  .big { font-size:28px; text-align:center; margin:10px 0; }
+  table { width:100%; border-collapse:collapse; } td, th { padding:6px; border-bottom:1px solid #eee; text-align:left; }
+  .pair { display:flex; gap:10px; } .pair > div { flex:1; text-align:center; background:#f3f7ef; border-radius:10px; padding:10px; }
+  footer { text-align:center; color:var(--muted); font-size:12px; padding:20px; }
+</style>
+</head>
+<body>
+<header>
+  <h1><span class="muted">Lektion 10 ·</span> 🚌 길과 교통 — Fluss, Bus &amp; Straße</h1>
+  <nav id="nav"></nav>
+  <div class="zoom"><button id="zm" aria-label="Verkleinern">A−</button><span id="zv"></span><button id="zp" aria-label="Vergrößern">A+</button>
+    <label class="spd">🐢 Tempo <input type="range" id="spd" min="0" max="3" step="1"> <span id="sv"></span></label></div>
+</header>
+<main id="main"></main>
+<script>
+(function(){
+  var z=parseFloat(localStorage.getItem('pageZoom'))||1, m=document.getElementById('main'), v=document.getElementById('zv');
+  function set(x){ z=Math.min(2,Math.max(0.8,Math.round(x*10)/10)); m.style.zoom=z; v.textContent=Math.round(z*100)+'%'; localStorage.setItem('pageZoom',z); }
+  document.getElementById('zm').onclick=function(){set(z-0.1)};
+  document.getElementById('zp').onclick=function(){set(z+0.1)};
+  set(z);
+  var S=[["s10","schnell"],["s25","normal"],["s40","langsam"],["s50","sehr langsam"]], r=document.getElementById('spd'), sv=document.getElementById('sv');
+  var si=localStorage.getItem('audioSpeed'); si=si===null?2:+si;
+  function setS(i){ r.value=i; window.audioDir=S[i][0]; sv.textContent=S[i][1]; localStorage.setItem('audioSpeed',i); }
+  r.oninput=function(){setS(+r.value)};
+  setS(si);
+})();
+</script>
+<footer>Pictures: <a href="https://openmoji.org">OpenMoji</a> (CC BY-SA 4.0) · Audio: Edge TTS · Anki deck: anki/topik-11-traffic.apkg</footer>
+<script>
+const DATA = {"words": [{"word": "흐르다", "pron": "흐르다", "pos": "v.", "de": "fließen", "en": "to flow", "yo": "흘러요", "note": "ㄹ-Einschub (르-unregelmäßig): 흐르다 → 흘러요, wie 모르다 → 몰라요.", "img": "img/topik11b-1f30a.png", "audio": "f7d9f4c032d8.mp3", "yoAudio": "0fc999d8c196.mp3", "ex": {"ko": "강이 흘러요.", "de": "Der Fluss fließt.", "en": "The river flows.", "audio": "b531adb85673.mp3"}}, {"word": "강", "pron": "강", "pos": "n.", "de": "Fluss", "en": "river", "yo": null, "note": "한강 = der Han-Fluss in Seoul. 강 근처 = in der Nähe des Flusses.", "img": "img/topik11b-1f3de.png", "audio": "e82093a4eeb9.mp3", "yoAudio": null, "ex": {"ko": "강이 넓어요.", "de": "Der Fluss ist breit.", "en": "The river is wide.", "audio": "3a3136f482b9.mp3"}}, {"word": "건너다", "pron": "건너다", "pos": "v.", "de": "überqueren", "en": "to cross", "yo": "건너요", "note": "N을/를 건너다: 길을 건너다, 횡단보도를 건너다.", "img": "img/topik11b-1f309.png", "audio": "b810c9b37dcd.mp3", "yoAudio": "478a84439e79.mp3", "ex": {"ko": "강을 건너요.", "de": "Ich überquere den Fluss.", "en": "I cross the river.", "audio": "3bd481ee9559.mp3"}}, {"word": "횡단보도", "pron": "횡단보도", "pos": "n.", "de": "Zebrastreifen", "en": "crosswalk", "yo": null, "note": "횡단 (Überquerung) + 보도 (Gehweg). Aussprache [횡단보도].", "img": "img/topik11b-1f6a6.png", "audio": "bc8e2d406f75.mp3", "yoAudio": null, "ex": {"ko": "횡단보도를 건너요.", "de": "Ich gehe über den Zebrastreifen.", "en": "I cross at the crosswalk.", "audio": "b28625d29d1d.mp3"}}, {"word": "기다리다", "pron": "기다리다", "pos": "v.", "de": "warten", "en": "to wait", "yo": "기다려요", "note": "Im Koreanischen mit Akkusativ: N을/를 기다리다 = auf N warten.", "img": "img/topik11b-23f3.png", "audio": "7046c782850f.mp3", "yoAudio": "7b2371eed745.mp3", "ex": {"ko": "버스를 기다려요.", "de": "Ich warte auf den Bus.", "en": "I'm waiting for the bus.", "audio": "fe02e47633ad.mp3"}}, {"word": "버스", "pron": "버스", "pos": "n.", "de": "Bus", "en": "bus", "yo": null, "note": "버스 정류장 = Bushaltestelle.", "img": "img/topik11b-1f68c.png", "audio": "6bcbdf00d16d.mp3", "yoAudio": null, "ex": {"ko": "버스가 와요.", "de": "Der Bus kommt.", "en": "The bus is coming.", "audio": "1396411950fa.mp3"}}, {"word": "타다", "pron": "타다", "pos": "v.", "de": "fahren (mit), einsteigen", "en": "to ride, to get on", "yo": "타요", "note": "N을/를 타다 = mit N fahren (Bus, Zug, Taxi, Fahrrad). Auch: reiten, Ski fahren.", "img": "img/topik11b-1f68f.png", "audio": "329b23d6b0e6.mp3", "yoAudio": "5ec7abd43b5f.mp3", "ex": {"ko": "버스를 타요.", "de": "Ich fahre mit dem Bus.", "en": "I take the bus.", "audio": "4cfc474520a3.mp3"}}, {"word": "내리다", "pron": "내리다", "pos": "v.", "de": "aussteigen; fallen", "en": "to get off", "yo": "내려요", "note": "N에서 내리다 = aus N aussteigen. Auch: 비가 내려요 = es regnet.", "img": "img/topik11b-1f6aa.png", "audio": "b78408973e12.mp3", "yoAudio": "69a0446620d6.mp3", "ex": {"ko": "여기에서 내려요.", "de": "Ich steige hier aus.", "en": "I get off here.", "audio": "33dd711e509b.mp3"}}, {"word": "차", "pron": "차", "pos": "n.", "de": "Auto; Tee", "en": "car", "yo": null, "note": "Dasselbe Wort bedeutet auch „Tee“ (녹차 = grüner Tee).", "img": "img/topik11b-1f697.png", "audio": "99963d329dab.mp3", "yoAudio": null, "ex": {"ko": "차가 많아요.", "de": "Es gibt viele Autos.", "en": "There are many cars.", "audio": "68767f54bafa.mp3"}}, {"word": "운전하다", "pron": "운전하다", "pos": "v.", "de": "Auto fahren, lenken", "en": "to drive", "yo": "운전해요", "note": "운전 (das Fahren) + 하다. 운전사 = Fahrer(in).", "img": "img/topik11b-1f9d1-1f697.png", "audio": "7eaaf7f5ba30.mp3", "yoAudio": "a05a15353b8f.mp3", "ex": {"ko": "차를 운전해요.", "de": "Ich fahre Auto.", "en": "I drive a car.", "audio": "388190e11556.mp3"}}, {"word": "낮", "pron": "낟", "pos": "n.", "de": "Tag (Tageszeit), Tagsüber", "en": "day, daytime", "yo": null, "note": "Aussprache [낟]; 낮에 [나제]. Nicht verwechseln mit 낮다 (niedrig sein).", "img": "img/topik11b-1f31e.png", "audio": "4a8c98b95c27.mp3", "yoAudio": null, "ex": {"ko": "낮에 일해요.", "de": "Tagsüber arbeite ich.", "en": "I work during the day.", "audio": "79aed7594c7e.mp3"}}, {"word": "밤", "pron": "밤", "pos": "n.", "de": "Nacht", "en": "night", "yo": null, "note": "밤에 [바메] = nachts. Gegenteil: 낮. Auch: Kastanie.", "img": "img/topik11b-1f319.png", "audio": "167da7570a07.mp3", "yoAudio": null, "ex": {"ko": "밤에 자요.", "de": "Nachts schlafe ich.", "en": "I sleep at night.", "audio": "9f6cdaa8e936.mp3"}}], "anki": {"deck": "Koreanisch::Start", "tag": "topik11"}, "pairs": [["낮 🌞", "밤 🌙"], ["타다 🚌", "내리다 🚪"], ["건너다 🚶", "기다리다 ⏳"]], "grammar": [["르-unregelmäßig", "흐르다 → 흘러요 (wie 모르다 → 몰라요): vor -아/어 wird 르 zu ㄹ라 / ㄹ러."], ["N을/를 타다", "Im Koreanischen mit Akkusativ: 버스를 타요 (mit dem Bus fahren), 차를 타요."], ["N에서 내리다", "Aussteigen mit 에서: 여기에서 내려요, 강 근처에서 내려요."], ["N을/를 기다리다", "Warten auf + Akkusativ: 버스를 기다려요, 친구를 기다려요."], ["N을/를 건너다", "Überqueren + Akkusativ: 횡단보도를 건너요, 강을 건너요."], ["낮에 / 밤에", "에 bei Tageszeiten: 낮에 = tagsüber, 밤에 = nachts. Aussprache 낮 [낟], 낮에 [나제]."]], "dialogueTitle": ["버스 정류장", "An der Bushaltestelle"], "dialogue": [{"spk": "A", "ko": "버스를 기다려요?", "de": "Wartest du auf den Bus?", "en": "Are you waiting for the bus?", "audio": "adc7ebdc747a.mp3"}, {"spk": "B", "ko": "네. 차가 많아서 늦어요.", "de": "Ja. Es sind viele Autos, deshalb kommt er spät.", "en": "Yes. There are lots of cars, so it's late.", "audio": "3f527a4d6baf.mp3"}, {"spk": "A", "ko": "저는 보통 버스를 타요.", "de": "Ich fahre normalerweise mit dem Bus.", "en": "I usually take the bus.", "audio": "82858db25b30.mp3"}, {"spk": "B", "ko": "저도요. 운전은 어려워요.", "de": "Ich auch. Autofahren ist schwer.", "en": "Me too. Driving is hard.", "audio": "92e7abe11294.mp3"}, {"spk": "A", "ko": "어디에서 내려요?", "de": "Wo steigst du aus?", "en": "Where do you get off?", "audio": "b172741e8e61.mp3"}, {"spk": "B", "ko": "강 근처에서 내려요.", "de": "In der Nähe des Flusses.", "en": "Near the river.", "audio": "bf4ab6091288.mp3"}, {"spk": "A", "ko": "강이 정말 예뻐요. 물이 천천히 흘러요.", "de": "Der Fluss ist richtig schön. Das Wasser fließt langsam.", "en": "The river is really pretty. The water flows slowly.", "audio": "7e99ec91da17.mp3"}, {"spk": "B", "ko": "네. 횡단보도를 건너요. 그리고 강이 있어요.", "de": "Ja. Man geht über den Zebrastreifen, und da ist der Fluss.", "en": "Yes. You cross the crosswalk, and there's the river.", "audio": "e0cc02372b4d.mp3"}, {"spk": "A", "ko": "낮에도 예뻐요?", "de": "Ist er auch tagsüber schön?", "en": "Is it pretty during the day too?", "audio": "08126e751782.mp3"}, {"spk": "B", "ko": "낮에도 밤에도 예뻐요!", "de": "Tagsüber und nachts schön!", "en": "Pretty by day and by night!", "audio": "c1178f32de5c.mp3"}], "storyTitle": ["버스 여행", "Eine Busfahrt"], "story": [{"ko": "저는 버스 정류장에서 버스를 기다려요.", "de": "Ich warte an der Haltestelle auf den Bus.", "audio": "0da3963871ca.mp3"}, {"ko": "차가 정말 많아요.", "de": "Es sind wirklich viele Autos unterwegs.", "audio": "09c337463f86.mp3"}, {"ko": "버스가 와요. 저는 버스를 타요.", "de": "Der Bus kommt. Ich steige ein.", "audio": "57ffe2484e50.mp3"}, {"ko": "버스는 강을 건너요.", "de": "Der Bus überquert den Fluss.", "audio": "a4aa65cc29e3.mp3"}, {"ko": "강이 천천히 흘러요.", "de": "Der Fluss fließt langsam.", "audio": "32c8ead7a29b.mp3"}, {"ko": "저는 횡단보도 앞에서 내려요.", "de": "Ich steige vor dem Zebrastreifen aus.", "audio": "23f8b519f7cf.mp3"}, {"ko": "횡단보도에서 친구를 기다려요.", "de": "Am Zebrastreifen warte ich auf meinen Freund.", "audio": "af8bae86e039.mp3"}, {"ko": "친구는 차를 운전해요.", "de": "Mein Freund fährt Auto.", "audio": "fd681967af98.mp3"}, {"ko": "친구는 낮에 일해요.", "de": "Mein Freund arbeitet tagsüber.", "audio": "697c06bd48e6.mp3"}, {"ko": "밤에 강은 정말 예뻐요.", "de": "Nachts ist der Fluss wirklich schön.", "audio": "3825714f1b16.mp3"}, {"ko": "우리는 같이 횡단보도를 건너요.", "de": "Wir überqueren zusammen den Zebrastreifen.", "audio": "7cc3911490b3.mp3"}, {"ko": "오늘은 정말 좋은 날이에요!", "de": "Heute ist wirklich ein schöner Tag!", "audio": "4de5e826f796.mp3"}], "dictation": [{"ko": "강이 흘러요.", "audio": "b531adb85673.mp3"}, {"ko": "강이 넓어요.", "audio": "3a3136f482b9.mp3"}, {"ko": "강을 건너요.", "audio": "3bd481ee9559.mp3"}, {"ko": "횡단보도를 건너요.", "audio": "b28625d29d1d.mp3"}, {"ko": "버스를 기다려요.", "audio": "fe02e47633ad.mp3"}, {"ko": "버스가 와요.", "audio": "1396411950fa.mp3"}, {"ko": "버스를 타요.", "audio": "4cfc474520a3.mp3"}, {"ko": "여기에서 내려요.", "audio": "33dd711e509b.mp3"}, {"ko": "차가 많아요.", "audio": "68767f54bafa.mp3"}, {"ko": "차를 운전해요.", "audio": "388190e11556.mp3"}, {"ko": "낮에 일해요.", "audio": "79aed7594c7e.mp3"}, {"ko": "밤에 자요.", "audio": "9f6cdaa8e936.mp3"}]};
+const $ = (s, r=document) => r.querySelector(s);
+let cur = null;
+let runId = 0;
+const src = f => "audio/" + window.audioDir + "/" + f;
+function play(file) { runId++; if (cur) cur.pause(); cur = new Audio(src(file)); cur.play(); }
+function stopAudio() { runId++; if (cur) cur.pause(); document.querySelectorAll(".story.now").forEach(e => e.classList.remove("now")); }
+const btn = f => `<button class="play" onclick="play('${f}')">🔊</button>`;
+const tg = (e, g) => { if (!e.target.closest('button')) g.querySelectorAll('.reveal').forEach(x => x.classList.toggle('open')); };
+const shuffle = a => a.map(x => [Math.random(), x]).sort((p, q) => p[0] - q[0]).map(x => x[1]);
+
+async function ankiPush(b) {
+  const msg = $("#ankiMsg"), call = async (action, params) => {
+    const r = await (await fetch("http://127.0.0.1:8765", {method:"POST", body:JSON.stringify({action, version:6, params})})).json();
+    if (r.error) throw new Error(r.error);
+    return r.result;
+  };
+  b.disabled = true; let added = 0, updated = 0;
+  try {
+    await call("createDeck", {deck:DATA.anki.deck});
+    for (const [i, w] of DATA.words.entries()) {
+      msg.textContent = `${i+1}/${DATA.words.length} …`;
+      const file = w.img.split("/").pop();
+      if (location.protocol === "file:") {
+        // browsers block fetch() on file://, so let Anki read the picture from disk
+        let dir = decodeURIComponent(location.pathname).replace(/[^/]*$/, "").replace(/^\/(?=[A-Za-z]:)/, "");
+        await call("storeMediaFile", {filename:file, path:dir + w.img});
+      } else {
+        const blob = await (await fetch(w.img)).blob();
+        const data = await new Promise(res => { const f = new FileReader(); f.onload = () => res(f.result.split(",")[1]); f.readAsDataURL(blob); });
+        await call("storeMediaFile", {filename:file, data});
+      }
+      const yo = w.yo ? ` → ${w.yo}` : "";
+      const fields = {
+        "Vorderseite": `<img src='${file}'><br><b>${w.de}</b><br><br><span style='color:#888'>${w.ex.de}</span>`,
+        "Rückseite": `<span style='font-size:135%'><b>${w.word}</b>${yo}</span> [${w.pron}]<br><br>${w.ex.ko}<br><span style='color:#888'>${w.ex.de}</span><br><br><span style='color:#888;font-size:85%'>${w.note}</span>`};
+      const ids = await call("findNotes", {query:`"Rückseite:*<b>${w.word}</b>*"`});
+      if (ids.length) { await call("updateNoteFields", {note:{id:ids[0], fields}}); updated++; }
+      else { await call("addNote", {note:{deckName:DATA.anki.deck, modelName:"Einfach", fields, tags:["koreanisch", DATA.anki.tag]}}); added++; }
+    }
+    msg.textContent = `✓ ${added} neu, ${updated} aktualisiert – jetzt in Anki synchronisieren`;
+  } catch (e) {
+    msg.textContent = "Fehler: " + e.message + " (läuft Anki mit AnkiConnect? Ist diese Seite in webCorsOriginList erlaubt?)";
+  }
+  b.disabled = false;
+}
+
+const TABS = {
+  "Wörter": () => `<p class="muted">Rate das Wort zum Bild, dann tippe auf den unscharfen Bereich. Tippe 🔊 zum Anhören.
+      <button class="btn" onclick="document.querySelectorAll('.reveal').forEach(e=>e.classList.toggle('open', this.dataset.s!=='1')); this.dataset.s=this.dataset.s==='1'?'':'1'">Alle zeigen/verbergen</button>
+      <button class="btn" id="ankiBtn" onclick="ankiPush(this)">📥 In Anki übernehmen</button> <span class="muted" id="ankiMsg"></span></p><div class="words">` +
+    DATA.words.map(w => `<div class="card word">
+      <img src="${w.img}" alt="" style="cursor:pointer" onclick="var c=this.closest('.word'),o=!c.querySelector('.reveal.open');c.querySelectorAll('.reveal').forEach(x=>x.classList.toggle('open',o))">
+      <div class="de">${w.de}</div>
+      <div class="grp" onclick="tg(event,this)">
+      <div class="k"><span class="reveal">${w.word}</span> ${btn(w.audio)}</div>
+      <div class="muted reveal">[${w.pron}] · ${w.pos}</div>
+      ${w.yo ? `<div class="yo"><span class="reveal">${w.yo}</span> ${btn(w.yoAudio)}</div>` : ""}</div>
+      <div class="ex grp" onclick="tg(event,this)">${btn(w.ex.audio)}<div><span class="reveal">${w.ex.ko}</span><br><span class="muted">${w.ex.de}</span></div></div>
+      <div class="note grp" onclick="tg(event,this)"><span class="reveal">${w.note}</span></div></div>`).join("") + `</div>`,
+
+  "Zusammenhang": () => `<div class="card"><h3>Gegensatzpaare</h3>` +
+      DATA.pairs.map(p => `<div class="pair"><div class="big">${p[0]}</div><div class="big">${p[1]}</div></div>`).join("") + `</div>
+    <div class="card"><h3>Grammatik-Notizen</h3><table>` +
+      DATA.grammar.map(g => `<tr><td><b>${g[0]}</b></td><td>${g[1]}</td></tr>`).join("") + `</table></div>`,
+
+  "Dialog": () => `<div class="card"><h3>${DATA.dialogueTitle[0]} <span class="muted">${DATA.dialogueTitle[1]}</span></h3>` +
+    DATA.dialogue.map(d => `<div class="bubble ${d.spk}">${btn(d.audio)}<div class="t"><div class="ko reveal" onclick="this.classList.toggle('open')">${d.ko}</div>
+      <div class="muted hidden-t" onclick="this.classList.toggle('open')">${d.de}</div></div></div>`).join("") +
+    `<button class="btn" onclick="playAll()">▶ Alles abspielen</button> <button class="btn" onclick="document.querySelectorAll('.bubble .reveal, .bubble .hidden-t').forEach(e=>e.classList.toggle('open', this.dataset.s!=='1')); this.dataset.s=this.dataset.s==='1'?'':'1'">Alle zeigen/verbergen</button></div>`,
+
+  "Geschichte": () => `<div class="card"><h3>${DATA.storyTitle[0]} <span class="muted">${DATA.storyTitle[1]}</span></h3>
+      <p class="muted">Höre Satz für Satz. Tippe auf den unscharfen Satz, um ihn zu sehen – die Übersetzung darunter separat.</p>
+      <p><button class="btn" onclick="playStory()">▶ Ganze Geschichte</button> <button class="btn" onclick="stopAudio()">⏹ Stop</button>
+      <button class="btn" onclick="document.querySelectorAll('.story .reveal').forEach(e=>e.classList.toggle('open', this.dataset.s!=='1')); this.dataset.s=this.dataset.s==='1'?'':'1'">Alle zeigen/verbergen</button></p>` +
+    DATA.story.map((s, i) => `<div class="story" id="st${i}"><span class="muted">${i + 1}</span>${btn(s.audio)}<div>
+      <div class="reveal ko" onclick="this.classList.toggle('open')">${s.ko}</div>
+      <div class="reveal muted" onclick="this.classList.toggle('open')">${s.de}</div></div></div>`).join("") + `</div>`,
+
+  "Diktat": () => `<div id="dict"></div>`,
+};
+
+function dictation() {
+  const el = $("#dict"), items = shuffle(DATA.dictation); let i = 0;
+  const show = () => {
+    if (i >= items.length) { el.innerHTML = `<div class="card"><div class="big">🎉</div><button class="btn" onclick="dictation()">Nochmal</button></div>`; i = 0; return; }
+    const d = items[i];
+    el.innerHTML = `<div class="card"><div class="muted">${i + 1} / ${items.length} · Höre und schreibe</div>
+      <div class="big">${btn(d.audio)}</div><input type="text" id="inp" autocomplete="off" placeholder="한국어…">
+      <p id="res" class="muted"></p><div id="act"><button class="btn" id="chk">Prüfen</button></div></div>`;
+    play(d.audio);
+    const norm = s => s.replace(/[\s.?!]/g, "");
+    const check = () => {
+      const ok = norm($("#inp").value) === norm(d.ko);
+      if (ok) { $("#res").innerHTML = "✅ Richtig!"; setTimeout(() => { i++; show(); }, 800); return; }
+      $("#res").innerHTML = `❌ Nicht ganz. Richtig: <b>${d.ko}</b>`;
+      $("#act").innerHTML = `<button class="btn" id="retry">↻ Nochmal versuchen</button> <button class="btn" id="next">Weiter →</button>`;
+      $("#retry").onclick = () => { $("#res").innerHTML = ""; $("#act").innerHTML = `<button class="btn" id="chk">Prüfen</button>`; $("#chk").onclick = check; $("#inp").value = ""; $("#inp").focus(); play(d.audio); };
+      $("#next").onclick = () => { i++; show(); };
+    };
+    $("#chk").onclick = check;
+    $("#inp").onkeydown = e => { if (e.key === "Enter" && $("#chk")) check(); };
+  };
+  show();
+}
+
+function playStory() {
+  stopAudio(); const id = runId; let i = 0;
+  const next = () => {
+    document.querySelectorAll(".story.now").forEach(e => e.classList.remove("now"));
+    if (id !== runId || i >= DATA.story.length) return;
+    const el = document.getElementById("st" + i); el.classList.add("now"); el.scrollIntoView({ block: "center", behavior: "smooth" });
+    cur = new Audio(src(DATA.story[i++].audio));
+    cur.onended = () => setTimeout(() => { if (id === runId) next(); }, 2500);
+    cur.play();
+  };
+  next();
+}
+
+function playAll() {
+  let i = 0;
+  const next = () => { if (i >= DATA.dialogue.length) return; cur = new Audio(src(DATA.dialogue[i++].audio)); cur.onended = () => setTimeout(next, 1800); cur.play(); };
+  next();
+}
+
+function tab(name) {
+  document.querySelectorAll("#nav button").forEach(b => {
+    b.classList.toggle("active", b.textContent === name);
+    if (b.textContent === name) b.scrollIntoView({ block: "nearest", inline: "nearest" });
+  });
+  $("#main").innerHTML = TABS[name]();
+  if (name === "Diktat") dictation();
+}
+$("#nav").innerHTML = Object.keys(TABS).map(n => `<button onclick="tab('${n}')">${n}</button>`).join("");
+tab("Wörter");
+</script>
+</body>
+</html>
