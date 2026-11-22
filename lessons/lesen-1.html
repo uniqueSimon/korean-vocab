@@ -59,6 +59,27 @@
 <tr><td>요즘</td><td>neuerdings, in letzter Zeit</td></tr>
 <tr><td>지난 주말</td><td>letztes Wochenende</td></tr>
 <tr><td>말하다</td><td>sagen, sprechen</td></tr>
+<tr><td>다음 날</td><td>am nächsten Tag</td></tr>
+<tr><td>바닷가</td><td>Strand, Küste</td></tr>
+<tr><td>산책하다</td><td>spazieren gehen</td></tr>
+<tr><td>파도</td><td>Welle</td></tr>
+<tr><td>소리</td><td>Geräusch, Klang</td></tr>
+<tr><td>시원하다</td><td>erfrischend, angenehm kühl</td></tr>
+<tr><td>조개</td><td>Muschel</td></tr>
+<tr><td>줍다</td><td>aufheben, auflesen</td></tr>
+<tr><td>사진을 찍다</td><td>ein Foto machen</td></tr>
+<tr><td>시장</td><td>Markt</td></tr>
+<tr><td>생선</td><td>Fisch (als Speise)</td></tr>
+<tr><td>길을 잃어버리다</td><td>sich verlaufen</td></tr>
+<tr><td>길</td><td>Weg, Straße</td></tr>
+<tr><td>아주머니</td><td>Frau mittleren Alters, Verkäuferin</td></tr>
+<tr><td>물어보다</td><td>nachfragen</td></tr>
+<tr><td>친절하게</td><td>freundlich</td></tr>
+<tr><td>가르쳐 주다</td><td>jmdm. etwas erklären/zeigen</td></tr>
+<tr><td>기차를 타다</td><td>mit dem Zug fahren</td></tr>
+<tr><td>돌아오다</td><td>zurückkommen</td></tr>
+<tr><td>피곤하다</td><td>müde sein</td></tr>
+<tr><td>행복하다 · 여행</td><td>glücklich sein · Reise</td></tr>
 <tr><td>-고 · -아서/-어서 · -(이)라서 · -지만 · -(으)면서</td><td>und · weil/deshalb · weil (bei 이에요) · aber · während (Grammatik im Text)</td></tr>
 <tr><td>하고 (물었어요/대답했어요)</td><td>"…" und fragt/antwortet (Zitat-Partikel)</td></tr>
 <tr><td>언제 · 무슨 · 왜</td><td>wann · welche(r/s) · warum (nur in den Fragen)</td></tr>
@@ -129,10 +150,31 @@ const S = [
   "Papa öffnete das Geschenk selbst. Die Uhr war wirklich schön. Lachend sagte er: „Danke!“"
  ],
  [
+  "다음 날 아침에는 바닷가를 산책했어요. 파도 소리가 정말 시원했어요.",
+  "Am nächsten Morgen spazierten wir am Strand. Das Wellenrauschen war wirklich erfrischend."
+ ],
+ [
+  "동생은 조개를 많이 주웠어요. 오빠는 사진을 찍었어요.",
+  "Mein Geschwister sammelte viele Muscheln auf. Mein Bruder machte Fotos."
+ ],
+ [
+  "점심에는 시장에 갔어요. 시장은 사람이 정말 많았어요. 엄마는 신선한 생선을 샀어요.",
+  "Mittags gingen wir auf den Markt. Dort waren wirklich viele Leute. Mama kaufte frischen Fisch."
+ ],
+ [
+  "저는 길을 잃어버렸어요. 그래서 가게 아주머니에게 길을 물어봤어요. 아주머니는 친절하게 가르쳐 주셨어요.",
+  "Ich habe mich verlaufen. Also fragte ich eine Verkäuferin nach dem Weg. Sie erklärte ihn freundlich."
+ ],
+ [
+  "저녁에는 기차를 타고 서울에 돌아왔어요. 피곤했지만 정말 행복한 여행이었어요.",
+  "Abends fuhren wir mit dem Zug zurück nach Seoul. Wir waren müde, aber es war eine wirklich glückliche Reise."
+ ],
+ [
   "우리는 모두 \"생일 축하해요, 아빠!\" 하고 말했어요.",
   "Wir alle sagten: „Alles Gute zum Geburtstag, Papa!“"
  ]
 ];
+
 document.getElementById("text").innerHTML = S.map(s => `<div class="s" onclick="this.classList.toggle('open')">${s[0]}<span class="de">${s[1]}</span></div>`).join("");
 
 const Q = [["아빠 생일은 언제였어요?", ["금요일", "지난 주말", "어제"], 1], ["엄마는 무슨 선물을 샀어요?", ["가방", "책", "시계"], 2], ["오빠는 왜 고기를 조금만 먹었어요?", ["다이어트를 해요.", "고기가 비싸요.", "배고파요."], 0]];
